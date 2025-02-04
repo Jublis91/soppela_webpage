@@ -1,0 +1,16 @@
+[
+    {
+      "id": 1,
+      "title": "Ensimmäinen blogipostaus",
+      "date": "2025-02-04",
+      "content": "Tässä on ensimmäinen blogiteksti...",
+      "image": "/images/blog1.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Toinen blogipostaus",
+      "date": "2025-02-05",
+      "content": "Tämä on toinen kirjoitus...",
+      "image": "/images/blog2.jpg"
+    }
+  ]
