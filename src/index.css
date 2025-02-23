@@ -126,3 +126,73 @@ footer {
 .footer-links a:hover {
   text-decoration: underline;
 }
+
+.contact-container {
+  max-width: 1000px;
+  margin: 150px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(255, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+
+.contact-container h1,
+.contact-container h2 {
+  text-align: center;
+  color: #333;
+}
+
+.contact-container label {
+  text-align: left;
+  font-size: 18px;
+  color: #050303;
+}
+
+.contact-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: column;
+  gap: 15px;
+}
+
+.contact-container input,
+.contact-container textarea {
+  width: 80%;
+  margin-left: auto;
+  padding: 12px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.contact-container input:focus,
+.contact-container textarea:focus {
+  border-color: #e20707;
+  outline: none;
+}
+
+.contact-container textarea {
+  height: 150px;
+  resize: none;
+}
+
+.contact-container button {
+  background-color: #e20707;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+}
+
+.contact-container button:hover {
+  background-color: #ff4d4d;
+  transform: scale(1.05);
+}

@@ -8,17 +8,19 @@ function Contact() {
   });
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+    console.log('Kenttä päivitetty: ${name}, uusi arvo: ${value}');
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log('Lomake lähetetty seuraavilla tiedoilla:', formData);
     alert(`Kiitos yhteydenotosta, ${formData.name}!`);
-    // Tässä voit lisätä lomakkeen lähetyksen backendille tai sähköpostiin
   };
 
   return (
-    <div>
+    <div className="contact-container">
       <h1>Ota yhteyttä</h1>
       <form onSubmit={handleSubmit}>
         <div>
