@@ -3,6 +3,7 @@ import Soppela from "./pages/Soppela";
 import Me from "./pages/Me";
 import Portfolio from "./pages/Portfolio";
 import Contact from "./pages/Contact";
+import Book from "./pages/Book";
 
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
@@ -70,6 +71,11 @@ function App() {
                 Ota yhteyttä
               </Link>
             </li>
+            <li>
+              <Link to="/Book" onClick={() => console.log("Klikattu: Kirja")}>
+                Kirja
+              </Link>
+            </li>
           </ul>
         </nav>
 
@@ -80,6 +86,7 @@ function App() {
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/soppela" element={<Soppela />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/Book" element={<Book />} />
         </Routes>
 
         {/* Alareuna Footer */}
