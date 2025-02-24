@@ -15,19 +15,19 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #181515;
   text-decoration: inherit;
 }
 a:hover {
   color: #535bf2;
 }
 
-body {
+html, body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden; /* Estää vaakasuoran vierityksen */
 }
 
 h1 {
@@ -67,49 +67,113 @@ button:focus-visible {
   }
 }
 
-nav {
-  background-color: #e20707;
-  padding: 10px 0;
-  position: fixed;
+.hero-container {
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-image {
+  width: 100vw; /* Pakottaa kuvan täyttämään koko näytön leveyden */
+  height: 300px; /* Aseta korkeus */
+  object-fit: cover; /* Rajaa kuva täyttämään alue ilman venymistä */
+  object-position: 20% 60%; /* Voit muuttaa esim. 'left top' tai 'right center' */
+  display: block; /* Poistaa ylimääräiset marginaalit */
+}
+
+
+/* ✅ Kiinteä navigointipalkki */
+.nav-bar {
+  position: sticky;
   top: 0;
   left: 0;
   width: 100%;
+  background-color: #dddddd;
+  padding: 10px 0;
   z-index: 1000;
 }
 
-nav ul {
+.nav-bar ul {
+  list-style: none;
   display: flex;
   justify-content: center;
-  list-style: none;
   margin: 0;
   padding: 0;
 }
 
-nav ul li {
+.nav-bar ul li {
+  position: relative; /* Tarvitaan pudotusvalikon sijoitteluun */
   margin: 0 15px;
 }
 
-nav ul li a {
-  color: #fff;
+
+.nav-bar a {
+  color: #181515;
   font-size: 1.2em;
   font-weight: 500;
   padding: 0.5em 1em;
   text-decoration: none;
 }
 
-nav ul li a:hover {
-  color: #555;
+.nav-bar a:hover {
+  color: #585757;
   border-radius: 5px;
 }
 
-footer {
+/* ✅ Pudotusvalikon muotoilu */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out;
+}
+
+
+/* ✅ Näytetään pudotusvalikko, kun hiiri on Portfolio-linkin päällä */
+.dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dropdown-menu li {
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown-menu a {
+  color: #333;
+  padding: 10px;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-menu a:hover {
   background-color: #e20707;
-  color: #fff;
-  padding: 10px 0;
+  color: white;
+  border-radius: 5px;
+}
+
+/* ✅ Kiinteä footer */
+footer {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
+  background-color: #dddddd;
+  color: #181515;
+  text-align: center;
+  padding: 10px 0;
   z-index: 1000;
 }
 
@@ -118,23 +182,28 @@ footer {
 }
 
 .footer-links a {
-  color: #fff;
+  color: #181515;
   text-decoration: none;
   margin: 0 10px;
 }
 
+.main-content {
+  text-align: center;
+  margin-top: 80px; /* Estää sisällön menemästä navigaation alle */
+  padding: 20px;
+  min-height: calc(100vh - 120px); /* Jättää tilaa footerille */
+  overflow-y: auto;
+}
 .footer-links a:hover {
   text-decoration: underline;
 }
 
-.contact-container {
-  max-width: 1000px;
-  margin: 150px auto;
-  padding: 30px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(255, 0, 0, 0.1);
-  transition: all 0.3s ease-in-out;
+.contact-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* ✅ Tämä keskittää input-kentät */
+  gap: 15px;
+  width: 100%;
 }
 
 
@@ -159,8 +228,9 @@ footer {
 
 .contact-container input,
 .contact-container textarea {
-  width: 80%;
-  margin-left: auto;
+  width: 100%; /* ✅ Asetetaan täysi leveys parent-containeriin */
+  max-width: 80%; /* ✅ Rajoitetaan leveys */
+  margin: 0 auto; /* ✅ Keskittää elementit vaakasuunnassa */
   padding: 12px;
   border: 2px solid #ccc;
   border-radius: 5px;
@@ -180,7 +250,7 @@ footer {
 }
 
 .contact-container button {
-  background-color: #e20707;
+  background-color: #202020;
   color: #fff;
   border: none;
   padding: 12px;
@@ -193,6 +263,22 @@ footer {
 }
 
 .contact-container button:hover {
-  background-color: #ff4d4d;
+  background-color: #5f5b5b;
   transform: scale(1.05);
+}
+
+.header {
+  position: relative;
+  text-align: center;
+  background-color: #181515;
+  padding-top: 120px; /* Varmistaa, että kuva ei jää navigaation alle */
+}
+
+
+.header-image {
+  width: 300%;
+  margin-left: -100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: cover;
 }
