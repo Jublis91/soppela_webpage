@@ -127,7 +127,7 @@ button:focus-visible {
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: #fff;
+  background-color: #dddddd;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   min-width: 150px;
@@ -159,8 +159,8 @@ button:focus-visible {
 }
 
 .dropdown-menu a:hover {
-  background-color: #e20707;
-  color: white;
+  background-color: #222222;
+  color: #dddddd;
   border-radius: 5px;
 }
 
