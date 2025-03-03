@@ -375,3 +375,28 @@ button:focus-visible {
 .selected-image button:hover {
   background: #ccc;
 }
+
+/* Otsikot */
+.text-heading {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.text-subheading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+}
+
+/* Kappaleet */
+.text-paragraph {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+/* Lista */
+.text-list {
+  margin-left: 1.5rem;
+  list-style-type: disc;
+}
