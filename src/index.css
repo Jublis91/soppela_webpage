@@ -22,6 +22,10 @@ a:hover {
   color: #535bf2;
 }
 
+body {
+  min-height: 200vh; /* Testausta varten, jotta voi rullata alas */
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -165,7 +169,7 @@ button:focus-visible {
 }
 
 /* ✅ Kiinteä footer */
-footer {
+.footer {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -175,6 +179,22 @@ footer {
   text-align: center;
   padding: 10px 0;
   z-index: 1000;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+  opacity: 0;
+  transform: translateY(50px);
+  visibility: hidden;
+}
+
+.footer.visible {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.footer.hidden {
+  opacity: 0;
+  transform: translateY(50px);
+  visibility: hidden;
 }
 
 .footer-links {
@@ -185,6 +205,13 @@ footer {
   color: #181515;
   text-decoration: none;
   margin: 0 10px;
+}
+
+@media (max-width: 600px) {
+  .footer {
+    font-size: 14px;
+    padding: 10px;
+  }
 }
 
 .main-content {
@@ -281,4 +308,70 @@ footer {
   height: auto;
   max-height: 300px;
   object-fit: cover;
+}
+
+/* Yleinen tyylitys gallerialle */
+.soppela-images {
+  text-align: center;
+  padding: 20px;
+}
+
+/* Kuvagalleria ruudukossa */
+.images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+/* Kuvien tyyli */
+.images img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.images img:hover {
+  transform: scale(1.05);
+  opacity: 0.8;
+}
+
+/* Modal-tyylit */
+.selected-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.selected-image img {
+  max-width: 90%;
+  max-height: 80%;
+  border-radius: 10px;
+}
+
+.selected-image button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  background: white;
+  color: black;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.2s ease-in-out;
+}
+
+.selected-image button:hover {
+  background: #ccc;
 }
