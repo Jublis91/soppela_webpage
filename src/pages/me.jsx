@@ -10,7 +10,6 @@ function Me() {
       .catch((error) => console.error("Virhe ladattaessa tekstiä:", error));
   }, []);
 
-  // Jäsennellään teksti ja sovelletaan CSS-luokkia
   const renderText = () => {
     return content.split("\n").map((line, index) => {
       if (line.startsWith("# ")) {
@@ -28,9 +27,14 @@ function Me() {
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-heading">Me</h1>
-      {renderText()}
+    <div className="me-container">
+      <h1 className="me-title">Emma Nikander</h1>
+      <div className="me-content">
+        <img src="/images/soppela_images/IMG_3044.JPEG" alt="Kuva minusta" className="profile-image" />
+        <div className="text-box">
+          {renderText()}
+        </div>
+      </div>
     </div>
   );
 }

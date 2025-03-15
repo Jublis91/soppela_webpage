@@ -1,3 +1,4 @@
+/* ✅ Yleiset tyylit ja fontit */
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -13,19 +14,23 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ✅ Linkkien muotoilu */
 a {
   font-weight: 500;
   color: #181515;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
 
+/* ✅ Kehon (body) perusasetukset */
 body {
   min-height: 200vh; /* Testausta varten, jotta voi rullata alas */
 }
 
+/* ✅ Poistaa ylimääräisen marginaalin ja estää sivun leveyden ylittymisen */
 html, body {
   margin: 0;
   padding: 0;
@@ -34,11 +39,13 @@ html, body {
   overflow-x: hidden; /* Estää vaakasuoran vierityksen */
 }
 
+/* ✅ Otsikoiden tyylitys */
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
 
+/* ✅ Painikkeiden perusmuotoilu */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -50,14 +57,18 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
+/* ✅ Painikkeen fokustyylit (näkyy kun käyttäjä navigoi näppäimistöllä) */
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* ✅ Teeman mukainen vaalea tila */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -71,6 +82,7 @@ button:focus-visible {
   }
 }
 
+/* ✅ Hero-osio (etusivun pääkuva) */
 .hero-container {
   width: 100vw;
   overflow: hidden;
@@ -80,15 +92,14 @@ button:focus-visible {
 }
 
 .hero-image {
-  width: 100vw; /* Pakottaa kuvan täyttämään koko näytön leveyden */
-  height: 300px; /* Aseta korkeus */
-  object-fit: cover; /* Rajaa kuva täyttämään alue ilman venymistä */
-  object-position: 20% 60%; /* Voit muuttaa esim. 'left top' tai 'right center' */
-  display: block; /* Poistaa ylimääräiset marginaalit */
+  width: 100vw;
+  height: 300px;
+  object-fit: cover;
+  object-position: 20% 60%; /* Kuvan asemointi */
+  display: block;
 }
 
-
-/* ✅ Kiinteä navigointipalkki */
+/* ✅ Navigointipalkki */
 .nav-bar {
   position: sticky;
   top: 0;
@@ -112,7 +123,7 @@ button:focus-visible {
   margin: 0 15px;
 }
 
-
+/* ✅ Navigointipalkin linkit */
 .nav-bar a {
   color: #181515;
   font-size: 1.2em;
@@ -143,32 +154,13 @@ button:focus-visible {
   transition: opacity 0.3s ease-in-out;
 }
 
-
 /* ✅ Näytetään pudotusvalikko, kun hiiri on Portfolio-linkin päällä */
 .dropdown:hover .dropdown-menu {
   opacity: 1;
   visibility: visible;
 }
 
-.dropdown-menu li {
-  margin: 0;
-  padding: 0;
-}
-
-.dropdown-menu a {
-  color: #333;
-  padding: 10px;
-  display: block;
-  text-align: left;
-}
-
-.dropdown-menu a:hover {
-  background-color: #222222;
-  color: #dddddd;
-  border-radius: 5px;
-}
-
-/* ✅ Kiinteä footer */
+/* ✅ Footerin perusasetukset (kiinteä sivun alareunassa, mutta piilossa) */
 .footer {
   position: fixed;
   bottom: 0;
@@ -179,26 +171,13 @@ button:focus-visible {
   text-align: center;
   padding: 10px 0;
   z-index: 1000;
-  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
-  opacity: 0;
-  transform: translateY(50px);
-  visibility: hidden;
+  transform: translateY(100%); /* Footer on oletuksena piilossa */
+  transition: transform 0.3s ease-in-out;
 }
 
+/* ✅ Näytetään footer, kun käyttäjä skrollaa alas */
 .footer.visible {
-  opacity: 1;
   transform: translateY(0);
-  visibility: visible;
-}
-
-.footer.hidden {
-  opacity: 0;
-  transform: translateY(50px);
-  visibility: hidden;
-}
-
-.footer-links {
-  margin-top: 10px;
 }
 
 .footer-links a {
@@ -207,131 +186,31 @@ button:focus-visible {
   margin: 0 10px;
 }
 
-@media (max-width: 600px) {
-  .footer {
-    font-size: 14px;
-    padding: 10px;
-  }
-}
-
-.main-content {
-  text-align: center;
-  margin-top: 80px; /* Estää sisällön menemästä navigaation alle */
-  padding: 20px;
-  min-height: calc(100vh - 120px); /* Jättää tilaa footerille */
-  overflow-y: auto;
-}
-.footer-links a:hover {
-  text-decoration: underline;
-}
-
-.contact-container form {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* ✅ Tämä keskittää input-kentät */
-  gap: 15px;
-  width: 100%;
-}
-
-
-.contact-container h1,
-.contact-container h2 {
-  text-align: center;
-  color: #333;
-}
-
-.contact-container label {
-  text-align: left;
-  font-size: 18px;
-  color: #050303;
-}
-
-.contact-container form {
-  display: flex;
-  flex-direction: column;
-  align-items: column;
-  gap: 15px;
-}
-
-.contact-container input,
-.contact-container textarea {
-  width: 100%; /* ✅ Asetetaan täysi leveys parent-containeriin */
-  max-width: 80%; /* ✅ Rajoitetaan leveys */
-  margin: 0 auto; /* ✅ Keskittää elementit vaakasuunnassa */
-  padding: 12px;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-  transition: border-color 0.3s ease-in-out;
-}
-
-.contact-container input:focus,
-.contact-container textarea:focus {
-  border-color: #e20707;
-  outline: none;
-}
-
-.contact-container textarea {
-  height: 150px;
-  resize: none;
-}
-
-.contact-container button {
-  background-color: #202020;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: 600;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease-in-out;
-}
-
-.contact-container button:hover {
-  background-color: #5f5b5b;
-  transform: scale(1.05);
-}
-
-.header {
-  position: relative;
-  text-align: center;
-  background-color: #181515;
-  padding-top: 120px; /* Varmistaa, että kuva ei jää navigaation alle */
-}
-
-
-.header-image {
-  width: 300%;
-  margin-left: -100%;
-  height: auto;
-  max-height: 300px;
-  object-fit: cover;
-}
-
-/* Yleinen tyylitys gallerialle */
+/* ✅ Kuvagallerian säiliö */
 .soppela-images {
   text-align: center;
   padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* Kuvagalleria ruudukossa */
+/* ✅ Kuvagallerian ruudukko (3 kuvaa vierekkäin) */
 .images {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-  max-width: 800px;
-  margin: 20px auto;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Kolme kuvaa rinnakkain */
+  gap: 15px;
+  width: 100%;
 }
 
-/* Kuvien tyyli */
+/* ✅ Pienoiskuvat galleriassa */
 .images img {
   width: 100%;
-  height: 150px;
-  object-fit: cover;
+  height: 200px; /* Vakiokorkeus */
+  object-fit: contain; /* Näyttää kuvan kokonaan ilman leikkaamista */
   border-radius: 10px;
   cursor: pointer;
+  background-color: #000; /* Tausta lisätty, jos kuva ei täytä koko aluetta */
+  padding: 5px; /* Jättää pienen reunan, jos kuva ei täytä tilaa */
   transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
 }
 
@@ -340,7 +219,7 @@ button:focus-visible {
   opacity: 0.8;
 }
 
-/* Modal-tyylit */
+/* ✅ Täysikokoinen kuva overlay-tilassa */
 .selected-image {
   position: fixed;
   top: 0;
@@ -352,14 +231,21 @@ button:focus-visible {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  z-index: 1000;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
+/* ✅ Täysikokoinen kuva (näkyy oikeassa koossa) */
 .selected-image img {
   max-width: 90%;
-  max-height: 80%;
+  max-height: 90%;
+  object-fit: contain; /* Pitää kuvan kokonaisena */
   border-radius: 10px;
+  background-color: #000; /* Varautuu, jos kuva ei täytä aluetta */
 }
 
+/* ✅ Sulkemispainike */
 .selected-image button {
   margin-top: 20px;
   padding: 10px 20px;
@@ -376,7 +262,22 @@ button:focus-visible {
   background: #ccc;
 }
 
-/* Otsikot */
+/* ✅ Responsiivisuus: 2 kuvaa keskikokoisilla näytöillä */
+@media (max-width: 900px) {
+  .images {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+/* ✅ Responsiivisuus: 1 kuva per rivi pienillä näytöillä */
+@media (max-width: 600px) {
+  .images {
+    grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
+  }
+}
+
+
+/* ✅ Tekstityylit */
 .text-heading {
   font-size: 1.5rem;
   font-weight: bold;
@@ -389,14 +290,81 @@ button:focus-visible {
   margin-top: 0.75rem;
 }
 
-/* Kappaleet */
 .text-paragraph {
   margin-bottom: 0.5rem;
   line-height: 1.6;
 }
 
-/* Lista */
-.text-list {
-  margin-left: 1.5rem;
-  list-style-type: disc;
+/* ✅ Profiilin kuva ja tekstilaatikko */
+/* ✅ Kokosivun asettelu */
+.me-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  animation: fadeIn 0.8s ease-in-out; /* Animaatio sisääntulolle */
+}
+
+/* ✅ Otsikon muotoilu */
+.me-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* ✅ Asettelu: kuva vasemmalle, teksti oikealle */
+.me-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  text-align: left;
+}
+
+/* ✅ Kuvan muotoilu */
+.profile-image {
+  width: 50%; /* Kiinteä leveys */
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.2); /* Kevyt varjo */
+}
+
+/* ✅ Tekstilaatikon muotoilu */
+.text-box {
+  flex: 1;
+  background: #4b4b4b;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ Responsiivisuus mobiilissa */
+@media (max-width: 800px) {
+  .me-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-image {
+    width: 80%;
+  }
+
+  .text-box {
+    width: 90%;
+  }
+}
+
+/* ✅ Sisääntuloanimaatio */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

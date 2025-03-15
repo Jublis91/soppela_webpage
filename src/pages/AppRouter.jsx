@@ -22,9 +22,10 @@ function RouteLogger() {
   return null;
 }
 
-// Korjattu Navigaatiokomponentti
+// Navigaatio, jossa hallitaan erikseen Portfolio- ja Soppela-pudotusvalikot
 function Navigation() {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [portfolioDropdown, setPortfolioDropdown] = useState(false);
+  const [soppelaDropdown, setSoppelaDropdown] = useState(false);
 
   return (
     <nav className="nav-bar">
@@ -35,11 +36,11 @@ function Navigation() {
         {/* Portfolio-pudotusvalikko */}
         <li
           className="dropdown"
-          onMouseEnter={() => setDropdownOpen(true)}
-          onMouseLeave={() => setDropdownOpen(false)}
+          onMouseEnter={() => setPortfolioDropdown(true)}
+          onMouseLeave={() => setPortfolioDropdown(false)}
         >
           <Link to="/portfolio">Portfolio</Link>
-          {dropdownOpen && (
+          {portfolioDropdown && (
             <ul className="dropdown-menu">
               <li><Link to="/portfolio/text">Tekstit</Link></li>
               <li><Link to="/portfolio/images">Kuvat</Link></li>
@@ -47,14 +48,14 @@ function Navigation() {
           )}
         </li>
 
-        {/*Soppela-pudotusvalikko */}
+        {/* Soppela-pudotusvalikko */}
         <li
           className="dropdown"
-          onMouseEnter={() => setDropdownOpen(true)}
-          onMouseLeave={() => setDropdownOpen(false)}
+          onMouseEnter={() => setSoppelaDropdown(true)}
+          onMouseLeave={() => setSoppelaDropdown(false)}
         >
           <Link to="/soppela">Soppela</Link>
-          {dropdownOpen && (
+          {soppelaDropdown && (
             <ul className="dropdown-menu">
               <li><Link to="/soppela/text">Tekstit</Link></li>
               <li><Link to="/soppela/images">Kuvat</Link></li>
@@ -71,32 +72,40 @@ function Navigation() {
 
 function AppRouter() {
   const location = useLocation();
+  const [showFooter, setShowFooter] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowFooter(window.scrollY > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
       <RouteLogger />
 
-      {/* Näytä kuva vain etusivulla */}
-      {location.pathname === "/" && (
-        <div className="hero-container">
-          <img src="/images/banner.jpg" alt="Yläkuva" className="hero-image" />
-        </div>
-      )}
+      {/* ✅ Bannerikuva, joka näkyy jokaisella sivulla */}
+      <div className="hero-container">
+        <img src="/images/banner.jpg" alt="Yläkuva" className="hero-image" />
+      </div>
 
-      {/* Kiinni kuvaan oleva navigointipalkki */}
+      {/* ✅ Kiinteä navigointipalkki */}
       <Navigation />
 
-      {/* Rullaava pääsisältö */}
+      {/* ✅ Pääsisältö */}
       <main className="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/me" element={<Me />} />
-          
+
           {/* Portfolio-polut ja uudelleenohjaus */}
           <Route path="/portfolio" element={<Navigate to="/portfolio/text" replace />} />
           <Route path="/portfolio/text" element={<PortfolioText />} />
           <Route path="/portfolio/images" element={<PortfolioImages />} />
-          
+
           {/* Soppela-polut ja uudelleenohjaus */}
           <Route path="/soppela" element={<Navigate to="/soppela/text" replace />} />
           <Route path="/soppela/text" element={<SoppelaText />} />
@@ -107,8 +116,8 @@ function AppRouter() {
         </Routes>
       </main>
 
-      {/* Kiinteä Footer */}
-      <Footer />
+      {/* ✅ Footer näkyy vasta, kun skrollataan alas */}
+      {showFooter && <Footer />}
     </>
   );
 }
