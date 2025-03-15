@@ -36,8 +36,14 @@ function Navigation() {
         {/* Portfolio-pudotusvalikko */}
         <li
           className="dropdown"
-          onMouseEnter={() => setPortfolioDropdown(true)}
-          onMouseLeave={() => setPortfolioDropdown(false)}
+          onMouseEnter={() => {
+            console.log("Portfolio-pudotusvalikko avattu");
+            setPortfolioDropdown(true);
+          }}
+          onMouseLeave={() => {
+            console.log("Portfolio-pudotusvalikko suljettu");
+            setPortfolioDropdown(false);
+          }}
         >
           <Link to="/portfolio">Portfolio</Link>
           {portfolioDropdown && (
@@ -51,8 +57,14 @@ function Navigation() {
         {/* Soppela-pudotusvalikko */}
         <li
           className="dropdown"
-          onMouseEnter={() => setSoppelaDropdown(true)}
-          onMouseLeave={() => setSoppelaDropdown(false)}
+          onMouseEnter={() => {
+            console.log("Soppela-pudotusvalikko avattu");
+            setSoppelaDropdown(true);
+          }}
+          onMouseLeave={() => {
+            console.log("Soppela-pudotusvalikko suljettu");
+            setSoppelaDropdown(false);
+          }}
         >
           <Link to="/soppela">Soppela</Link>
           {soppelaDropdown && (
@@ -77,11 +89,18 @@ function AppRouter() {
   useEffect(() => {
     const handleScroll = () => {
       setShowFooter(window.scrollY > 100);
+      console.log(`Käyttäjä skrollasi: window.scrollY = ${window.scrollY}`);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (showFooter) {
+      console.log("Footer näkyy nyt");
+    }
+  }, [showFooter]);
 
   return (
     <>
@@ -102,12 +121,28 @@ function AppRouter() {
           <Route path="/me" element={<Me />} />
 
           {/* Portfolio-polut ja uudelleenohjaus */}
-          <Route path="/portfolio" element={<Navigate to="/portfolio/text" replace />} />
+          <Route 
+            path="/portfolio" 
+            element={
+              <>
+                {console.log("Uudelleenohjaus -> /portfolio/text")}
+                <Navigate to="/portfolio/text" replace />
+              </>
+            } 
+          />
           <Route path="/portfolio/text" element={<PortfolioText />} />
           <Route path="/portfolio/images" element={<PortfolioImages />} />
 
           {/* Soppela-polut ja uudelleenohjaus */}
-          <Route path="/soppela" element={<Navigate to="/soppela/text" replace />} />
+          <Route 
+            path="/soppela" 
+            element={
+              <>
+                {console.log("Uudelleenohjaus -> /soppela/text")}
+                <Navigate to="/soppela/text" replace />
+              </>
+            } 
+          />
           <Route path="/soppela/text" element={<SoppelaText />} />
           <Route path="/soppela/images" element={<SoppelaImages />} />
 

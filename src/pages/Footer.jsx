@@ -9,16 +9,24 @@ export default function Footer() {
       const scrollTop = document.documentElement.scrollTop;
       const clientHeight = document.documentElement.clientHeight;
 
+      console.log(`ScrollTop: ${scrollTop}, ClientHeight: ${clientHeight}, ScrollHeight: ${scrollHeight}`);
+
       if (scrollTop + clientHeight >= scrollHeight - 20) {
+        if (!isVisible) {
+          console.log("✅ Footer näkyy nyt");
+        }
         setIsVisible(true);
       } else {
+        if (isVisible) {
+          console.log("❌ Footer piilotettu");
+        }
         setIsVisible(false);
       }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isVisible]);
 
   return (
     <footer className={`footer ${isVisible ? "visible" : "hidden"}`}>
