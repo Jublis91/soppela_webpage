@@ -27,7 +27,14 @@ a:hover {
 
 /* ✅ Kehon (body) perusasetukset */
 body {
-  min-height: 200vh; /* Testausta varten, jotta voi rullata alas */
+  /*min-height: 200vh; /* Testausta varten, jotta voi rullata alas */
+  text-align: center;
+  background-image: url('../images/background.JPEG');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  padding-bottom: 70px;
 }
 
 /* ✅ Poistaa ylimääräisen marginaalin ja estää sivun leveyden ylittymisen */
@@ -35,7 +42,7 @@ html, body {
   margin: 0;
   padding: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   overflow-x: hidden; /* Estää vaakasuoran vierityksen */
 }
 
@@ -80,6 +87,17 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Varmistaa, että sivu täyttää koko näytön korkeuden */
+}
+
+.main-content {
+  flex: 1; /* Työntää footeria alas */
+  padding-bottom: 60px; /* Jättää tilaa footerille */
 }
 
 /* ✅ Hero-osio (etusivun pääkuva) */
@@ -162,17 +180,16 @@ button:focus-visible {
 
 /* ✅ Footerin perusasetukset (kiinteä sivun alareunassa, mutta piilossa) */
 .footer {
-  position: fixed;
+  position: relative; /* Kiinnittää footerin näytön alareunaan */
   bottom: 0;
   left: 0;
   width: 100%;
   background-color: #dddddd;
   color: #181515;
   text-align: center;
-  padding: 10px 0;
-  z-index: 1000;
-  transform: translateY(100%); /* Footer on oletuksena piilossa */
-  transition: transform 0.3s ease-in-out;
+  padding: 15px 0;
+  min-height: 50px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Lisää varjon yläreunaan */
 }
 
 /* ✅ Näytetään footer, kun käyttäjä skrollaa alas */
@@ -310,8 +327,18 @@ button:focus-visible {
 .me-title {
   font-size: 2.5rem;
   margin-bottom: 20px;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 5px;
+  text-decoration: underline;
   text-align: center;
   font-weight: bold;
+}
+
+.me-subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  font-family: 'Gill Sans';
+  letter-spacing: 5px;
 }
 
 /* ✅ Asettelu: kuva vasemmalle, teksti oikealle */
@@ -321,12 +348,14 @@ button:focus-visible {
   justify-content: center;
   gap: 20px;
   text-align: left;
+  margin-top: 100px;
 }
 
 /* ✅ Kuvan muotoilu */
 .profile-image {
   width: 50%; /* Kiinteä leveys */
   height: auto;
+  margin-top: 100px;
   border-radius: 10px;
   box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.2); /* Kevyt varjo */
 }
@@ -367,4 +396,62 @@ button:focus-visible {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+
+/* ✅ Lomake */
+.contact-container {
+  max-width: 500px;
+  margin: 50px auto; /* Keskittää lomakkeen */
+  padding: 20px;
+  background: #585858;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.contact-container h1 {
+  margin-bottom: 20px;
+}
+
+.contact-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact-container label {
+  font-weight: bold;
+  text-align: left;
+  display: block;
+}
+
+.contact-container input,
+.contact-container textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.contact-container textarea {
+  resize: vertical;
+}
+
+.contact-container button {
+  width: 100%;
+  padding: 12px;
+  background-color: #919191;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.contact-container button:hover {
+  background-color: #222222;
 }

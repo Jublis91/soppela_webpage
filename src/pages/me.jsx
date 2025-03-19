@@ -48,6 +48,9 @@ function Me() {
   return (
     <div className="me-container">
       <h1 className="me-title">Emma Nikander</h1>
+      <h2 className="me-subtitle">Toimittaja</h2>
+      <h2 className="me-subtitle">Valokuvaaja</h2>
+      <h2 className="me-subtitle">Kirjailija</h2>
       <div className="me-content">
         <img 
           src="/images/soppela_images/IMG_3044.JPEG" 
