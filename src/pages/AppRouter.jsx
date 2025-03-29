@@ -1,7 +1,6 @@
 import { Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 
-import Home from "./Home";
 import Soppela from "./Soppela";
 import SoppelaText from "./SoppelaText";
 import SoppelaImages from "./SoppelaImages";
@@ -27,8 +26,7 @@ function Navigation() {
   return (
     <nav className="nav-bar">
       <ul>
-        <li><Link to="/">Etusivu</Link></li>
-        <li><Link to="/me">Minä</Link></li>
+        <li><Link to="/me">Emma</Link></li>
         <li className="dropdown">
           <Link to="/portfolio">Portfolio</Link>
           <ul className="dropdown-menu">
@@ -66,7 +64,7 @@ function AppRouter() {
       {/* ✅ Pääsisältö */}
       <main className="main-content">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Me />} />
           <Route path="/me" element={<Me />} />
           <Route path="/portfolio" element={<Navigate to="/portfolio/text" replace />} />
           <Route path="/portfolio/text" element={<PortfolioText />} />

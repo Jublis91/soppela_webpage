@@ -2,45 +2,87 @@ import { useState, useEffect } from "react";
 
 function Me() {
   const [content, setContent] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState("");
 
+  // Lataa sisältö palvelimelta
   useEffect(() => {
-    console.log("📥 Aloitetaan /me.txt lataaminen...");
-
-    fetch("/me.txt")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Verkkovirhe: ${response.status} ${response.statusText}`);
+    fetch("http://localhost:3001/api/content")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.content) {
+          setContent(data.content);
+        } else {
+          console.error("❌ Ei sisältöä palvelimelta");
         }
-        console.log("✅ /me.txt ladattu onnistuneesti");
-        return response.text();
       })
-      .then((text) => {
-        console.log("📄 Teksti ladattu, asetetaan sisältö...");
-        setContent(text);
-      })
-      .catch((error) => console.error("❌ Virhe ladattaessa tekstiä:", error));
+      .catch((err) => console.error("❌ Virhe haettaessa sisältöä:", err));
   }, []);
 
-  const renderText = () => {
-    console.log("🔍 Aloitetaan tekstin käsittely...");
-    return content.split("\n").map((line, index) => {
-      console.log(`📝 Käsitellään rivi ${index + 1}:`, line);
+  // Tallenna uusi sisältö
+  const saveChanges = () => {
+    fetch("http://localhost:3001/api/content", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ content: draft }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setContent(draft);
+          setEditing(false);
+          console.log("✅ Tallennettu palvelimelle");
+        } else {
+          console.error("❌ Tallennus epäonnistui");
+        }
+      })
+      .catch((err) => console.error("❌ Virhe tallennuksessa:", err));
+  };
 
+  const renderText = () => {
+    const parseLinks = (text) => {
+      const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+      const parts = [];
+      let lastIndex = 0;
+      let match;
+
+      while ((match = linkRegex.exec(text)) !== null) {
+        const [fullMatch, linkText, url] = match;
+        const start = match.index;
+
+        if (start > lastIndex) {
+          parts.push(text.slice(lastIndex, start));
+        }
+
+        parts.push(
+          <a key={url + start} href={url} target="_blank" rel="noopener noreferrer">
+            {linkText}
+          </a>
+        );
+
+        lastIndex = start + fullMatch.length;
+      }
+
+      if (lastIndex < text.length) {
+        parts.push(text.slice(lastIndex));
+      }
+
+      return parts;
+    };
+
+    return content.split("\n").map((line, index) => {
       if (line.startsWith("# ")) {
-        console.log(`🔹 Muutetaan otsikoksi: ${line.slice(2)}`);
-        return <h2 key={index} className="text-heading">{line.slice(2)}</h2>;
+        return <h2 key={index} className="text-heading">{parseLinks(line.slice(2))}</h2>;
       } else if (line.startsWith("## ")) {
-        console.log(`🔸 Muutetaan alaotsikoksi: ${line.slice(3)}`);
-        return <h3 key={index} className="text-subheading">{line.slice(3)}</h3>;
+        return <h3 key={index} className="text-subheading">{parseLinks(line.slice(3))}</h3>;
       } else if (line.trim() === "") {
-        console.log("⬜ Tyhjä rivi (lisätään <br>)");
         return <br key={index} />;
       } else if (line.startsWith("- ")) {
-        console.log(`📌 Lisätään listaan: ${line.slice(2)}`);
-        return <ul key={index} className="text-list"><li>{line.slice(2)}</li></ul>;
+        return <ul key={index} className="text-list"><li>{parseLinks(line.slice(2))}</li></ul>;
       } else {
-        console.log(`📄 Muutetaan kappaleeksi: ${line}`);
-        return <p key={index} className="text-paragraph">{line}</p>;
+        return <p key={index} className="text-paragraph">{parseLinks(line)}</p>;
       }
     });
   };
@@ -51,16 +93,43 @@ function Me() {
       <h2 className="me-subtitle">Toimittaja</h2>
       <h2 className="me-subtitle">Valokuvaaja</h2>
       <h2 className="me-subtitle">Kirjailija</h2>
+
       <div className="me-content">
-        <img 
-          src="/images/soppela_images/IMG_3044.JPEG" 
-          alt="Kuva minusta" 
-          className="profile-image" 
-          onLoad={() => console.log("🖼️ Profiilikuva ladattu")}
-          onError={() => console.error("❌ Virhe ladattaessa profiilikuvaa")}
+        <img
+          src="/images/soppela_images/IMG_3044.JPEG"
+          alt="Kuva minusta"
+          className="profile-image"
         />
+
         <div className="text-box">
-          {renderText()}
+          {editing ? (
+            <>
+              <textarea
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                rows={20}
+                style={{ width: "100%" }}
+              />
+              <br />
+              <button onClick={() => {
+                console.log("✏️ Tallenna painettu");
+                saveChanges();
+              }}>
+                💾 Tallenna
+              </button>
+              <button onClick={() => setEditing(false)}>❌ Peruuta</button>
+            </>
+          ) : (
+            <>
+              {renderText()}
+              <button onClick={() => {
+                setDraft(content);
+                setEditing(true);
+              }}>
+                ✏️ Muokkaa
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
