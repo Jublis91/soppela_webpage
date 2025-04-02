@@ -1,4 +1,6 @@
-import { useState } from "react";
+// Contact.jsx
+
+import { useState } from "react"
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -7,18 +9,21 @@ function Contact() {
     message: "",
   });
 
+  // Tilat lomakkeen kentille
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    console.log('Kenttä päivitetty: ${name}, uusi arvo: ${value}');
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
+    const { name, value } = e.target
+    console.log('Kenttä päivitetty: ${name}, uusi arvo: ${value}')
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+  
+  // Lähetä lomake
   const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Lomake lähetetty seuraavilla tiedoilla:', formData);
-    alert(`Kiitos yhteydenotosta, ${formData.name}!`);
-  };
+    e.preventDefault()
+    console.log('Lomake lähetetty seuraavilla tiedoilla:', formData)
+    alert(`Kiitos yhteydenotosta, ${formData.name}!`)
+  }
 
+  // Renderöi komponentti
   return (
     <div className="contact-container">
       <h1>Ota yhteyttä</h1>
@@ -62,4 +67,4 @@ function Contact() {
   );
 }
 
-export default Contact;
+export default Contact

@@ -1,27 +1,29 @@
-import { useState, useEffect } from "react";
+// Me.jsx
+
+import { useState, useEffect } from "react"
 
 function Me() {
-  const [content, setContent] = useState("");
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState("");
+  const [content, setContent] = useState("")
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState("")
 
   // Lataa sisältö palvelimelta
   useEffect(() => {
-    fetch("http://localhost:3001/api/content")
+    fetch("http://localhost:3001/api/me")
       .then((res) => res.json())
       .then((data) => {
         if (data.content) {
-          setContent(data.content);
+          setContent(data.content)
         } else {
-          console.error("❌ Ei sisältöä palvelimelta");
+          console.error("❌ Ei sisältöä palvelimelta")
         }
       })
-      .catch((err) => console.error("❌ Virhe haettaessa sisältöä:", err));
-  }, []);
+      .catch((err) => console.error("❌ Virhe haettaessa sisältöä:", err))
+  }, [])
 
   // Tallenna uusi sisältö
   const saveChanges = () => {
-    fetch("http://localhost:3001/api/content", {
+    fetch("http://localhost:3001/api/me", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,29 +33,29 @@ function Me() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          setContent(draft);
-          setEditing(false);
-          console.log("✅ Tallennettu palvelimelle");
+          setContent(draft)
+          setEditing(false)
+          console.log("✅ Tallennettu palvelimelle")
         } else {
-          console.error("❌ Tallennus epäonnistui");
+          console.error("❌ Tallennus epäonnistui")
         }
       })
-      .catch((err) => console.error("❌ Virhe tallennuksessa:", err));
-  };
+      .catch((err) => console.error("❌ Virhe tallennuksessa:", err))
+  }
 
   const renderText = () => {
     const parseLinks = (text) => {
-      const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
-      const parts = [];
-      let lastIndex = 0;
-      let match;
+      const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g
+      const parts = []
+      let lastIndex = 0
+      let match
 
       while ((match = linkRegex.exec(text)) !== null) {
-        const [fullMatch, linkText, url] = match;
-        const start = match.index;
+        const [fullMatch, linkText, url] = match
+        const start = match.index
 
         if (start > lastIndex) {
-          parts.push(text.slice(lastIndex, start));
+          parts.push(text.slice(lastIndex, start))
         }
 
         parts.push(
@@ -62,11 +64,11 @@ function Me() {
           </a>
         );
 
-        lastIndex = start + fullMatch.length;
+        lastIndex = start + fullMatch.length
       }
 
       if (lastIndex < text.length) {
-        parts.push(text.slice(lastIndex));
+        parts.push(text.slice(lastIndex))
       }
 
       return parts;
@@ -74,18 +76,18 @@ function Me() {
 
     return content.split("\n").map((line, index) => {
       if (line.startsWith("# ")) {
-        return <h2 key={index} className="text-heading">{parseLinks(line.slice(2))}</h2>;
+        return <h2 key={index} className="text-heading">{parseLinks(line.slice(2))}</h2>
       } else if (line.startsWith("## ")) {
-        return <h3 key={index} className="text-subheading">{parseLinks(line.slice(3))}</h3>;
+        return <h3 key={index} className="text-subheading">{parseLinks(line.slice(3))}</h3>
       } else if (line.trim() === "") {
-        return <br key={index} />;
+        return <br key={index} />
       } else if (line.startsWith("- ")) {
-        return <ul key={index} className="text-list"><li>{parseLinks(line.slice(2))}</li></ul>;
+        return <ul key={index} className="text-list"><li>{parseLinks(line.slice(2))}</li></ul>
       } else {
         return <p key={index} className="text-paragraph">{parseLinks(line)}</p>;
       }
-    });
-  };
+    })
+  }
 
   return (
     <div className="me-container">
@@ -96,7 +98,7 @@ function Me() {
 
       <div className="me-content">
         <img
-          src="/images/soppela_images/IMG_3044.JPEG"
+          src="/images/emma.jpg"
           alt="Kuva minusta"
           className="profile-image"
         />
@@ -112,7 +114,7 @@ function Me() {
               />
               <br />
               <button onClick={() => {
-                console.log("✏️ Tallenna painettu");
+                console.log("✏️ Tallenna painettu")
                 saveChanges();
               }}>
                 💾 Tallenna
@@ -123,8 +125,8 @@ function Me() {
             <>
               {renderText()}
               <button onClick={() => {
-                setDraft(content);
-                setEditing(true);
+                setDraft(content)
+                setEditing(true)
               }}>
                 ✏️ Muokkaa
               </button>
@@ -136,4 +138,4 @@ function Me() {
   );
 }
 
-export default Me;
+export default Me

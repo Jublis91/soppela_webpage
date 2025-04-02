@@ -1,24 +1,26 @@
-import { Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
-import { useEffect } from "react";
+// AppRouter.jsx
 
-import Soppela from "./Soppela";
-import SoppelaText from "./SoppelaText";
-import SoppelaImages from "./SoppelaImages";
-import Me from "./Me";
-import Portfolio from "./Portfolio";
-import PortfolioText from "./PortfolioText";
-import PortfolioImages from "./PortfolioImages";
-import Contact from "./Contact";
-import Book from "./Book";
-import Footer from "./Footer";
+import { Routes, Route, Link, useLocation, Navigate } from "react-router-dom"
+import { useEffect } from "react"
+
+import Soppela from "./Soppela"
+import SoppelaText from "./SoppelaText"
+import SoppelaImages from "./SoppelaImages"
+import Me from "./Me"
+import Portfolio from "./Portfolio"
+import PortfolioText from "./PortfolioText"
+import PortfolioImages from "./PortfolioImages"
+import Contact from "./Contact"
+import Book from "./Book"
+import Footer from "./Footer"
 
 // Reittilokin komponentti
 function RouteLogger() {
-  const location = useLocation();
+  const location = useLocation()
   useEffect(() => {
-    console.log(`Navigoitu osoitteeseen: ${location.pathname}`);
-  }, [location]);
-  return null;
+    console.log(`Navigoitu osoitteeseen: ${location.pathname}`)
+  }, [location])
+  return null
 }
 
 // Navigaatiopalkki
@@ -80,8 +82,8 @@ function AppRouter() {
       {/* ✅ Footer ei ole kiinteä, vaan sijoittuu sivun alareunaan */}
       <Footer />
     </div>
-  );
+  )
 }
 
 
-export default AppRouter;
+export default AppRouter

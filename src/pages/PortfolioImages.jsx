@@ -1,16 +1,21 @@
-import { useState } from 'react';
+// PortfolioImages.jsx
 
-// Testiä varten kovakoodatut kuvat
-const images = [
-  '/images/portfolio_images/ape.JPEG',
-  '/images/portfolio_images/IMG_0964.JPEG',
-  '/images/portfolio_images/IMG_0966.JPEG',
-  '/images/portfolio_images/IMG_1013.JPEG',
-  '/images/portfolio_images/IMG_1741.JPEG',
-];
+import { useEffect, useState } from "react"
 
 export default function PortfolioImages() {
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [images, setImages] = useState([])
+  const [selectedImage, setSelectedImage] = useState(null)
+
+  // Lataa kuvat palvelimelta
+  useEffect(() => {
+    fetch("http://localhost:3001/api/images/portfolio_images")
+      .then((res) => res.json())
+      .then((data) => {
+        setImages(data)
+        console.log("✅ Kuvat ladattu:", data)
+      })
+      .catch((err) => console.error("❌ Kuvien lataus epäonnistui:", err))
+  }, [])
 
   return (
     <div className="soppela-images">
@@ -19,10 +24,10 @@ export default function PortfolioImages() {
         {images.map((src, index) => (
           <img
             key={index}
-            src={src}
-            alt={`Gallery Image ${index + 1}`}
+            src={`http://localhost:3001${src}`}
+            alt={`Kuva ${index + 1}`}
             onClick={() => {
-              console.log(`🖼️ Klikattiin kuvaa: ${src}`);
+              console.log(`🖼️ Klikattiin kuvaa: ${src}`)
               setSelectedImage(src);
             }}
             onLoad={() => console.log(`✅ Kuva ladattu: ${src}`)}
@@ -34,15 +39,17 @@ export default function PortfolioImages() {
       {/* Näytä valittu kuva */}
       {selectedImage && (
         <div className="selected-image">
-          <img 
-            src={selectedImage} 
-            alt="Valittu kuva" 
-            onLoad={() => console.log(`🔍 Näytetään valittu kuva: ${selectedImage}`)}
+          <img
+            src={`http://localhost:3001${selectedImage}`}
+            alt="Valittu kuva"
+            onLoad={() =>
+              console.log(`🔍 Näytetään valittu kuva: ${selectedImage}`)
+            }
           />
-          <button 
+          <button
             onClick={() => {
-              console.log(`❌ Suljetaan kuva: ${selectedImage}`);
-              setSelectedImage(null);
+              console.log(`❌ Suljetaan kuva: ${selectedImage}`)
+              setSelectedImage(null)
             }}
           >
             Sulje
@@ -50,5 +57,5 @@ export default function PortfolioImages() {
         </div>
       )}
     </div>
-  );
+  )
 }

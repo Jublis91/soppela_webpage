@@ -1,6 +1,8 @@
-import { Routes, Route, Link } from "react-router-dom";
-import PortfolioText from "./PortfolioText";
-import PortfolioImages from "./PortfolioImages";
+// Portfolio.jsx
+
+import { Routes, Route, Link } from "react-router-dom"
+import PortfolioText from "./PortfolioText"
+import PortfolioImages from "./PortfolioImages"
 
 function Portfolio() {
   return (
@@ -22,4 +24,4 @@ function Portfolio() {
   );
 }
 
-export default Portfolio;
+export default Portfolio

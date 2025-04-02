@@ -1,6 +1,8 @@
-import { Routes, Route, Link } from "react-router-dom";
-import SoppelaImages from "./SoppelaImages";
-import SoppelaText from "./SoppelaText";
+//Soppela.jsx
+
+import { Routes, Route, Link } from "react-router-dom"
+import SoppelaImages from "./SoppelaImages"
+import SoppelaText from "./SoppelaText"
 
 function Soppela() {
   return (
@@ -22,4 +24,4 @@ function Soppela() {
   )
 }
 
-export default Soppela;
+export default Soppela

@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+// Footer.jsx
+
+import { useState, useEffect } from "react"
 
 /*
 export default function Footer() {
@@ -55,5 +57,5 @@ export default function Footer() {
       </div>
       <p>Sivun toteutti <a href="https://github.com/Jublis91" target="_blank" rel="noopener noreferrer">Juuso Nikander</a></p>
     </footer>
-  );
+  )
 }
