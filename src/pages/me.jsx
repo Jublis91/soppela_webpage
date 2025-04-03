@@ -43,6 +43,7 @@ function Me() {
       .catch((err) => console.error("❌ Virhe tallennuksessa:", err))
   }
 
+  // Renderöi teksti
   const renderText = () => {
     const parseLinks = (text) => {
       const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g
@@ -74,6 +75,7 @@ function Me() {
       return parts;
     };
 
+    // Jaetaan teksti riveihin
     return content.split("\n").map((line, index) => {
       if (line.startsWith("# ")) {
         return <h2 key={index} className="text-heading">{parseLinks(line.slice(2))}</h2>
@@ -88,7 +90,8 @@ function Me() {
       }
     })
   }
-
+  
+  // Renderöi komponentti
   return (
     <div className="me-container">
       <h1 className="me-title">Emma Nikander</h1>

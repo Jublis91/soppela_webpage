@@ -118,7 +118,7 @@ const storage = multer.diskStorage({
     const targetPath = path.join(IMAGES_DIR, folder)
 
     // tarkista, onko kansio olemassa
-    fs.mkdirSync(targetPath, { recursice: true })
+    fs.mkdirSync(targetPath, { recursive: true })
     cb(null, targetPath)
   }
 })
