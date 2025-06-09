@@ -1,11 +1,15 @@
 // SoppelaImages.jsx
 
 import { useState, useEffect } from 'react'
+import { getCurrentUser } from '../services/authUtils'
 
 export default function SoppelaImages() {
+  const user = getCurrentUser()
   const [images, setImages] = useState([])
   const [selectedImage, setSelectedImage] = useState(null)
   const [uploading, setUploading] = useState(false)
+
+  const isEditor = user && (user.role === 'admin' || user.role === 'owner')
 
   // Lataa kuvat palvelimelta
   const fetchImages = () => {
@@ -72,8 +76,12 @@ export default function SoppelaImages() {
     <div className="soppela-images">
       <h1>Soppela kuvat</h1>
 
+      {isEditor && (
+        <>
       <input type="file" accept="image/*" onChange={handleUpload} />
       {uploading && <p>Ladataan kuvaa...</p>}
+        </>
+      )}
 
       <div className="images">
         {images.map((src, index) => (
@@ -86,7 +94,9 @@ export default function SoppelaImages() {
                 setSelectedImage(src)
               }}
             />
-            <button onClick={() => handleDelete(src)}>Poista</button>
+            {isEditor && (
+              <button onClick={() => handleDelete(src)}>Poista</button>
+            )}
           </div>
         ))}
       </div>

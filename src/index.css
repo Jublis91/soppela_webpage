@@ -455,3 +455,27 @@ button:focus-visible {
 .contact-container button:hover {
   background-color: #222222;
 }
+
+/* ✅ Kirjautumissivu */
+.login-container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #aaa;
+}
+.login-container input {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
+}
+.login-container button {
+  padding: 12px;
+  width: 100%;
+  background-color: #333;
+  color: white;
+  border: none;
+  cursor: pointer;
+}

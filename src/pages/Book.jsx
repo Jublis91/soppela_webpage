@@ -1,8 +1,10 @@
 // Book.jsx
 
 import { useState, useEffect } from "react"
+import { getCurrentUser } from '../services/authUtils'
 
 function Book() {
+  const user = getCurrentUser()
   const [content, setContent] = useState("")
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState("")
@@ -102,6 +104,7 @@ function Book() {
 
         <div className="text-box">
           {editing ? (
+            (user && (user.role === "owner" || user.role === "admin")) ? (
             <>
               <textarea
                 value={draft}
@@ -114,14 +117,19 @@ function Book() {
               <button onClick={() => setEditing(false)}>❌ Peruuta</button>
             </>
           ) : (
+            <p>Sinulla ei ole oikeuskia muokata sisältöä</p>
+          )
+          ) : (
             <>
               {renderText()}
+              {(user && (user.role === "owner" || user.role === "admin")) && (
               <button onClick={() => {
                 setDraft(content)
                 setEditing(true)
               }}>
                 ✏️ Muokkaa
               </button>
+              )}
             </>
           )}
         </div>

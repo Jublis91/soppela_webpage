@@ -1,8 +1,11 @@
 // Me.jsx
 
 import { useState, useEffect } from "react"
+import { getCurrentUser } from '../services/authUtils'
+
 
 function Me() {
+  const user = getCurrentUser()
   const [content, setContent] = useState("")
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState("")
@@ -108,31 +111,32 @@ function Me() {
 
         <div className="text-box">
           {editing ? (
-            <>
-              <textarea
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                rows={20}
-                style={{ width: "100%" }}
-              />
-              <br />
-              <button onClick={() => {
-                console.log("✏️ Tallenna painettu")
-                saveChanges();
-              }}>
-                💾 Tallenna
-              </button>
-              <button onClick={() => setEditing(false)}>❌ Peruuta</button>
-            </>
+            (user && (user.role === 'admin' || user.role === 'owner')) ? (
+              <>
+                <textarea
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  rows={20}
+                  style={{ width: "100%" }}
+                />
+                <br />
+                <button onClick={saveChanges}>💾 Tallenna</button>
+                <button onClick={() => setEditing(false)}>❌ Peruuta</button>
+              </>
+            ) : (
+              <p>Sinulla ei ole oikeuksia muokata sisältöä.</p>
+            )
           ) : (
             <>
               {renderText()}
-              <button onClick={() => {
-                setDraft(content)
-                setEditing(true)
-              }}>
-                ✏️ Muokkaa
-              </button>
+              {(user && (user.role === 'admin' || user.role === 'owner')) && (
+                <button onClick={() => {
+                  setDraft(content)
+                  setEditing(true)
+                }}>
+                  ✏️ Muokkaa
+                </button>
+              )}
             </>
           )}
         </div>

@@ -3,6 +3,7 @@
 import { Routes, Route, Link } from "react-router-dom"
 import PortfolioText from "./PortfolioText"
 import PortfolioImages from "./PortfolioImages"
+import { getCurrentUser } from '../services/authUtils'
 
 function Portfolio() {
   return (

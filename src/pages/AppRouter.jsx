@@ -1,6 +1,6 @@
 // AppRouter.jsx
 
-import { Routes, Route, Link, useLocation, Navigate } from "react-router-dom"
+import { Routes, Route, Link, useLocation, Navigate, useNavigate } from "react-router-dom"
 import { useEffect } from "react"
 
 import Soppela from "./Soppela"
@@ -13,6 +13,9 @@ import PortfolioImages from "./PortfolioImages"
 import Contact from "./Contact"
 import Book from "./Book"
 import Footer from "./Footer"
+import Login from "./Login"
+import ChangePassword from "./ChangePassword"
+
 
 // Reittilokin komponentti
 function RouteLogger() {
@@ -25,6 +28,14 @@ function RouteLogger() {
 
 // Navigaatiopalkki
 function Navigation() {
+  const navigate = useNavigate()
+  const isLoggedIn = !!localStorage.getItem('token')
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    navigate('/')
+  }
+
   return (
     <nav className="nav-bar">
       <ul>
@@ -45,6 +56,12 @@ function Navigation() {
         </li>
         <li><Link to="/contact">Ota yhteyttä</Link></li>
         <li><Link to="/book">Kirja</Link></li>
+        {/* ✅ Näytä Kirjaudu ulos -linkki, jos käyttäjä on kirjautunut */}
+        {isLoggedIn ? (
+          <li><button onClick={handleLogout}>Kirjaudu ulos</button></li>
+        ) : (
+        <li><Link to="/login">Kirjaudu</Link></li>
+        )}
       </ul>
     </nav>
   );
@@ -66,6 +83,8 @@ function AppRouter() {
       {/* ✅ Pääsisältö */}
       <main className="main-content">
         <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/vaihda-salasana" element={<ChangePassword />} />
           <Route path="/" element={<Me />} />
           <Route path="/me" element={<Me />} />
           <Route path="/portfolio" element={<Navigate to="/portfolio/text" replace />} />

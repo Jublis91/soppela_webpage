@@ -5,6 +5,9 @@ import fs from "fs"
 import cors from "cors"
 import path from "path"
 import multer from "multer"
+import authRoutes from "./auth.js"
+
+import { requireAuth, requireRole } from './middleware.js'
 
 const app = express()
 const PORT = 3001
@@ -12,6 +15,7 @@ const IMAGES_DIR = path.join(process.cwd(), "public/images")
 
 app.use(cors())
 app.use(express.json())
+app.use('/api', authRoutes)
 app.use("/images", express.static("public/images"))
 
 // aputoiminnot tiedostojen lukuun ja kirjoittamiseen
@@ -36,7 +40,7 @@ app.get("/api/me", (req, res) => {
   }
 })
 
-app.post("/api/me", (req, res) => {
+app.post("/api/me", requireAuth, requireRole('owner'), (req, res) => {
   const { content } = req.body
   if (!content) return res.status(400).json({ error: "Ei sisältöä" })
 
@@ -63,7 +67,7 @@ app.get("/api/book", (req, res) => {
   }
 })
 
-app.post("/api/book", (req, res) => {
+app.post("/api/book", requireAuth, requireRole('owner'), (req, res) => {
   const { content } = req.body
   if (!content) return res.status(400).json({ error: "Ei sisältöä" })
 
@@ -125,7 +129,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage })
 
-app.post("/api/images/:folder", upload.single("image"), (req,res) => {
+app.post("/api/images/:folder", upload.single("image"), requireAuth, requireRole('owner'), (req,res) => {
   if (!req.file) {
     return res.status(400).json({ error: "Ei kuvaa ladattavaksi" })
   }
@@ -135,7 +139,7 @@ app.post("/api/images/:folder", upload.single("image"), (req,res) => {
 })
 
 // Poistaa kuvan
-app.delete("/api/images/:folder/:filename", (req, res) => {
+app.delete("/api/images/:folder/:filename", requireAuth, requireRole('owner'), (req, res) => {
   const { folder, filename } = req.params
   const filePath = path.join(IMAGES_DIR, folder, filename)
 

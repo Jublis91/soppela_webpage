@@ -1,4 +1,5 @@
 // SoppelaText.jsx
+import { getCurrentUser } from '../services/authUtils'
 
 function SoppelaText() {
     return (

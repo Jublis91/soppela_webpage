@@ -3,6 +3,7 @@
 import { Routes, Route, Link } from "react-router-dom"
 import SoppelaImages from "./SoppelaImages"
 import SoppelaText from "./SoppelaText"
+import { getCurrentUser } from '../services/authUtils'
 
 function Soppela() {
   return (

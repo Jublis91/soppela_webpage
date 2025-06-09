@@ -1,0 +1,14 @@
+[
+  {
+    "username": "admin",
+    "role": "admin",
+    "mustChangePassword": false,
+    "passwordHash": "$2b$10$bRpdSrEjp0xL8b/IekQYmeE3KK89xz2yvDqRr.wIDBd1rCLZorTzK"
+  },
+  {
+    "username": "Emma",
+    "role": "owner",
+    "mustChangePassword": false,
+    "passwordHash": "$2b$10$GRX53rCrOj.XKghBzemdU.5Jv/M2iNwS.TmEZoktZhdpitnQNJiM6"
+  }
+]

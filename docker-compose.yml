@@ -1,0 +1,11 @@
+services:
+  web:
+    image: node:18
+    container_name: soppela_web_dev
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "5173:5173"  # Vite-dev serverin oletusportti
+      - "3000:3000"  # Create React App portti
+    command: sh -c "npm install && npm run dev"

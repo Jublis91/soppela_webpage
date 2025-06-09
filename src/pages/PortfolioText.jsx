@@ -1,4 +1,5 @@
 // PortfolioText.jsx
+import { getCurrentUser } from '../services/authUtils'
 
 function PortfolioText() {
   return (
