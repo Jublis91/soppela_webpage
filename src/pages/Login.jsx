@@ -50,7 +50,7 @@ export default function Login() {
     }
 
     return (
-        <div className="login-container">
+        <div className="contact-container">
             <h2>Kirjaudu sisään</h2>
             <form onSubmit={handleLogin}>
                 <div className="form-group">

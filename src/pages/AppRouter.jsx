@@ -54,13 +54,13 @@ function Navigation() {
             <li><Link to="/soppela/images">Kuvat</Link></li>
           </ul>
         </li>
-        <li><Link to="/contact">Ota yhteyttä</Link></li>
         <li><Link to="/book">Kirja</Link></li>
         {/* ✅ Näytä Kirjaudu ulos -linkki, jos käyttäjä on kirjautunut */}
+        <li><Link to="/contact">Ota yhteyttä</Link></li>
         {isLoggedIn ? (
           <li><button onClick={handleLogout}>Kirjaudu ulos</button></li>
         ) : (
-        <li><Link to="/login">Kirjaudu</Link></li>
+          <li><Link to="/login">Kirjaudu</Link></li>
         )}
       </ul>
     </nav>
@@ -93,8 +93,8 @@ function AppRouter() {
           <Route path="/soppela" element={<Navigate to="/soppela/text" replace />} />
           <Route path="/soppela/text" element={<SoppelaText />} />
           <Route path="/soppela/images" element={<SoppelaImages />} />
-          <Route path="/contact" element={<Contact />} />
           <Route path="/book" element={<Book />} />
+          <Route path="/contact" element={<Contact />} />
         </Routes>
       </main>
 
