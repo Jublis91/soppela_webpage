@@ -1,4 +1,4 @@
-// authUtils.js
+import { logEvent } from './loggerClient.js' // tai muuta polku oikeaksi
 
 /**
  * Palauttaa nykyisen käyttäjän tiedot JWT-tokenista.
@@ -6,13 +6,17 @@
  */
 export function getCurrentUser() {
   const token = localStorage.getItem('token')
-  if (!token) return null
+  if (!token) {
+    logEvent('ℹ️ Ei tokenia saatavilla – käyttäjä ei ole kirjautunut')
+    return null
+  }
 
   try {
     const payload = JSON.parse(atob(token.split('.')[1]))
+    logEvent(`👤 Käyttäjä tunnistettu: ${payload.username || 'tuntematon'}`)
     return payload
   } catch (err) {
-    console.error('❌ Tokenin purku epäonnistui:', err)
+    logEvent(`❌ Tokenin purku epäonnistui: ${err.message}`)
     return null
   }
 }
@@ -21,7 +25,9 @@ export function getCurrentUser() {
  * Tarkistaa onko käyttäjä kirjautunut sisään.
  */
 export function isLoggedIn() {
-  return !!localStorage.getItem('token')
+  const loggedIn = !!localStorage.getItem('token')
+  logEvent(loggedIn ? '✅ Käyttäjä on kirjautuneena' : '❌ Käyttäjä ei ole kirjautuneena')
+  return loggedIn
 }
 
 /**
@@ -29,12 +35,18 @@ export function isLoggedIn() {
  */
 export function hasEditRights() {
   const user = getCurrentUser()
-  return user && (user.role === 'admin' || user.role === 'owner')
+  const hasRights = user && (user.role === 'admin' || user.role === 'owner')
+  logEvent(hasRights
+    ? `🔒 Käyttäjällä on muokkausoikeudet (${user.role})`
+    : `🔒 Käyttäjällä ei ole muokkausoikeuksia`)
+  return hasRights
 }
 
 /**
  * Kirjaa käyttäjän ulos ja tyhjentää tokenin.
  */
 export function logout() {
+  const user = getCurrentUser()
   localStorage.removeItem('token')
+  logEvent(`🚪 Käyttäjä kirjautui ulos: ${user?.username || 'tuntematon'}`)
 }

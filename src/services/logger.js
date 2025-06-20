@@ -1,13 +1,22 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const logFilePath = path.join(process.cwd(), 'logs', 'activity.log');
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
-export function logEvent(event) {
-    const timestamp = new Date().toISOString();
-    const logEntry = `${timestamp} - ${event}\n`;
+const logDir = path.join(__dirname, '..', 'logs')
+const logFilePath = path.join(logDir, 'activity.log')
 
-    fs.appendFile(lofFilePath, Linter, (err) => {
-        if (err) console.error('❌ Virhe lokitiedoston kirjoituksessa:', err.message);
-    })
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true })
+}
+
+export function logEvent(message) {
+  const timestamp = new Date().toISOString()
+  const entry = `${timestamp} - ${message}\n`
+
+  fs.appendFile(logFilePath, entry, err => {
+    if (err) console.error('❌ Lokitus epäonnistui:', err.message)
+  })
 }
