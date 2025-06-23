@@ -1,35 +1,43 @@
-// Me.jsx
-
 import { useState, useEffect } from "react"
 import { getCurrentUser } from '../services/authUtils'
-
 
 function Me() {
   const user = getCurrentUser()
   const [content, setContent] = useState("")
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState("")
+  const [profileImage, setProfileImage] = useState("/images/emma.jpg")
 
-  // Lataa sisältö palvelimelta
+  // Haetaan me-sisältö
   useEffect(() => {
     fetch("http://localhost:3001/api/me")
       .then((res) => res.json())
       .then((data) => {
-        if (data.content) {
-          setContent(data.content)
-        } else {
-          console.error("❌ Ei sisältöä palvelimelta")
-        }
+        if (data.content) setContent(data.content)
+        else console.error("❌ Ei sisältöä palvelimelta")
       })
       .catch((err) => console.error("❌ Virhe haettaessa sisältöä:", err))
   }, [])
 
-  // Tallenna uusi sisältö
+  // Haetaan asetukset (profiilikuva)
+  useEffect(() => {
+    fetch("http://localhost:3001/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.ProfileImage) {
+          setProfileImage(`/images/${data.ProfileImage}`)
+        }
+      })
+      .catch((err) => console.error("❌ Virhe haettaessa profiilikuvaa:", err))
+  }, [])
+
+  // Tallennetaan muutokset palvelimelle
   const saveChanges = () => {
     fetch("http://localhost:3001/api/me", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${user?.token}`
       },
       body: JSON.stringify({ content: draft }),
     })
@@ -46,7 +54,7 @@ function Me() {
       .catch((err) => console.error("❌ Virhe tallennuksessa:", err))
   }
 
-  // Renderöi teksti
+  // Renderöidään teksti HTML-elementteinä
   const renderText = () => {
     const parseLinks = (text) => {
       const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g
@@ -66,8 +74,7 @@ function Me() {
           <a key={url + start} href={url} target="_blank" rel="noopener noreferrer">
             {linkText}
           </a>
-        );
-
+        )
         lastIndex = start + fullMatch.length
       }
 
@@ -75,10 +82,9 @@ function Me() {
         parts.push(text.slice(lastIndex))
       }
 
-      return parts;
-    };
+      return parts
+    }
 
-    // Jaetaan teksti riveihin
     return content.split("\n").map((line, index) => {
       if (line.startsWith("# ")) {
         return <h2 key={index} className="text-heading">{parseLinks(line.slice(2))}</h2>
@@ -89,12 +95,12 @@ function Me() {
       } else if (line.startsWith("- ")) {
         return <ul key={index} className="text-list"><li>{parseLinks(line.slice(2))}</li></ul>
       } else {
-        return <p key={index} className="text-paragraph">{parseLinks(line)}</p>;
+        return <p key={index} className="text-paragraph">{parseLinks(line)}</p>
       }
     })
   }
-  
-  // Renderöi komponentti
+
+  // Jos käyttäjä on kirjautunut, näytetään muokkausnappi
   return (
     <div className="me-container">
       <h1 className="me-title">Emma Nikander</h1>
@@ -104,7 +110,7 @@ function Me() {
 
       <div className="me-content">
         <img
-          src="/images/emma.jpg"
+          src={profileImage}
           alt="Kuva minusta"
           className="profile-image"
         />
@@ -142,7 +148,7 @@ function Me() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export default Me

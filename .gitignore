@@ -27,3 +27,4 @@ dist-ssr
 suunnitelma.md
 data/
 /public
+.env
