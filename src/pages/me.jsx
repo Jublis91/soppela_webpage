@@ -1,5 +1,8 @@
+// me.jsx
+
 import { useState, useEffect } from "react"
 import { getCurrentUser } from '../services/authUtils'
+import { logEvent } from '../services/loggerClient' // 🔁 Lokitus
 
 function Me() {
   const user = getCurrentUser()
@@ -8,31 +11,41 @@ function Me() {
   const [draft, setDraft] = useState("")
   const [profileImage, setProfileImage] = useState("/images/emma.jpg")
 
-  // Haetaan me-sisältö
+  const canEdit = user && (user.role === 'admin' || user.role === 'owner')
+
+  // 📥 Haetaan "me"-sisältö palvelimelta
   useEffect(() => {
+    console.log("[ME] 🚀 Haetaan tekstiä...")
+    logEvent("[ME] Haetaan me-välilehden sisältöä")
+
     fetch("http://localhost:3001/api/me")
       .then((res) => res.json())
       .then((data) => {
-        if (data.content) setContent(data.content)
-        else console.error("❌ Ei sisältöä palvelimelta")
-      })
-      .catch((err) => console.error("❌ Virhe haettaessa sisältöä:", err))
-  }, [])
-
-  // Haetaan asetukset (profiilikuva)
-  useEffect(() => {
-    fetch("http://localhost:3001/api/settings")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.ProfileImage) {
-          setProfileImage(`/images/${data.ProfileImage}`)
+        if (data.content) {
+          setContent(data.content)
+          console.log("[ME] ✅ Sisältö ladattu.")
+          logEvent("[ME] Sisältö ladattu onnistuneesti")
+        } else {
+          console.warn("[ME] ⚠️ Sisältöä ei löytynyt.")
+          logEvent("[ME] ⚠️ Sisältöä ei löytynyt")
         }
       })
-      .catch((err) => console.error("❌ Virhe haettaessa profiilikuvaa:", err))
+      .catch((err) => {
+        console.error("❌ Virhe haettaessa sisältöä:", err)
+        logEvent(`[ME] ❌ Virhe haettaessa sisältöä: ${err.message}`)
+      })
   }, [])
 
-  // Tallennetaan muutokset palvelimelle
+  // 💾 Tallennetaan muokattu sisältö palvelimelle
   const saveChanges = () => {
+    if (!draft.trim()) {
+      alert("⚠️ Sisältö ei voi olla tyhjä.")
+      return
+    }
+
+    console.log("[ME] 💾 Tallennetaan palvelimelle...")
+    logEvent("[ME] Yritetään tallentaa muokattua sisältöä")
+
     fetch("http://localhost:3001/api/me", {
       method: "POST",
       headers: {
@@ -46,15 +59,20 @@ function Me() {
         if (data.success) {
           setContent(draft)
           setEditing(false)
-          console.log("✅ Tallennettu palvelimelle")
+          console.log("✅ Tallennettu onnistuneesti.")
+          logEvent("[ME] ✅ Muokattu sisältö tallennettu")
         } else {
-          console.error("❌ Tallennus epäonnistui")
+          console.error("❌ Tallennus epäonnistui:", data.message || "Tuntematon virhe")
+          logEvent(`[ME] ❌ Tallennus epäonnistui: ${data.message || "Tuntematon virhe"}`)
         }
       })
-      .catch((err) => console.error("❌ Virhe tallennuksessa:", err))
+      .catch((err) => {
+        console.error("❌ Virhe tallennuksessa:", err)
+        logEvent(`[ME] ❌ Virhe tallennuksessa: ${err.message}`)
+      })
   }
 
-  // Renderöidään teksti HTML-elementteinä
+  // 🔠 Muotoillaan sisältö rivien ja linkkien perusteella
   const renderText = () => {
     const parseLinks = (text) => {
       const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g
@@ -100,7 +118,6 @@ function Me() {
     })
   }
 
-  // Jos käyttäjä on kirjautunut, näytetään muokkausnappi
   return (
     <div className="me-container">
       <h1 className="me-title">Emma Nikander</h1>
@@ -117,7 +134,7 @@ function Me() {
 
         <div className="text-box">
           {editing ? (
-            (user && (user.role === 'admin' || user.role === 'owner')) ? (
+            canEdit ? (
               <>
                 <textarea
                   value={draft}
@@ -127,16 +144,22 @@ function Me() {
                 />
                 <br />
                 <button onClick={saveChanges}>💾 Tallenna</button>
-                <button onClick={() => setEditing(false)}>❌ Peruuta</button>
+                <button onClick={() => {
+                  console.log("[ME] ❌ Muokkaus peruutettu.")
+                  logEvent("[ME] Muokkaus peruutettiin")
+                  setEditing(false)
+                }}>❌ Peruuta</button>
               </>
             ) : (
-              <p>Sinulla ei ole oikeuksia muokata sisältöä.</p>
+              <p>❌ Sinulla ei ole oikeuksia muokata sisältöä.</p>
             )
           ) : (
             <>
               {renderText()}
-              {(user && (user.role === 'admin' || user.role === 'owner')) && (
+              {canEdit && (
                 <button onClick={() => {
+                  console.log("[ME] ✏️ Muokkaustila aktivoitu.")
+                  logEvent("[ME] ✏️ Käyttäjä aloitti muokkauksen")
                   setDraft(content)
                   setEditing(true)
                 }}>

@@ -1,3 +1,5 @@
+// hash_passwords.js
+
 import fs from 'fs'
 import bcrypt from 'bcrypt'
 import path from 'path'

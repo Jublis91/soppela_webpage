@@ -1,6 +1,7 @@
 // Footer.jsx
 
 import { useState, useEffect } from "react"
+import { logEvent } from "../services/loggerClient"
 
 /*
 export default function Footer() {
@@ -45,17 +46,67 @@ export default function Footer() {
   );
 }
   */
+
 export default function Footer() {
+  // 🔹 Lokita käyttäjän klikkaus ulkoisiin linkkeihin
+  const handleLinkClick = (label) => {
+    logEvent(`🔗 Käyttäjä klikkasi footer-linkkiä: ${label}`)
+  }
+
   return (
     <footer className="footer">
       <p>© 2025 Emma Nikander.</p>
-      <p>Ota yhteyttä: <a href="mailto:s-posti@esimerkki.com">s-posti@esimerkki.com</a></p>
+
+      <p>
+        Ota yhteyttä:{" "}
+        <a
+          href="mailto:s-posti@esimerkki.com"
+          onClick={() => handleLinkClick("Sähköposti")}
+        >
+          s-posti@esimerkki.com
+        </a>
+      </p>
+
       <div className="footer-links">
-        <a href="https://www.instagram.com/emmathestar" target="_blank" rel="noopener noreferrer">Instagram</a>
-        <a href="https://fi.linkedin.com/in/emmathestar" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a href="https://soppelassa.substack.com/" target="_blank" rel="noopener noreferrer">Kirjeitä Soppelasta</a>
+        <a
+          href="https://www.instagram.com/emmathestar"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => handleLinkClick("Instagram")}
+        >
+          Instagram
+        </a>
+
+        <a
+          href="https://fi.linkedin.com/in/emmathestar"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => handleLinkClick("LinkedIn")}
+        >
+          LinkedIn
+        </a>
+
+        <a
+          href="https://soppelassa.substack.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => handleLinkClick("Substack")}
+        >
+          Kirjeitä Soppelasta
+        </a>
       </div>
-      <p>Sivun toteutti <a href="https://github.com/Jublis91" target="_blank" rel="noopener noreferrer">Juuso Nikander</a></p>
+
+      <p>
+        Sivun toteutti{" "}
+        <a
+          href="https://github.com/Jublis91"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => handleLinkClick("GitHub - Jublis91")}
+        >
+          Juuso Nikander
+        </a>
+      </p>
     </footer>
   )
 }

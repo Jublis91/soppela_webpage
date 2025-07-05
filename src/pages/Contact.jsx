@@ -1,32 +1,60 @@
 // Contact.jsx
 
 import { useState } from "react"
+import { logEvent } from "../services/loggerClient"  // 🔹 Lisää lokitus
 
 function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
-  });
+  })
 
-  // Tilat lomakkeen kentille
+  const [status, setStatus] = useState(null)
+
+  // 🔹 Päivitä kentän arvo
   const handleChange = (e) => {
     const { name, value } = e.target
-    console.log('Kenttä päivitetty: ${name}, uusi arvo: ${value}')
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
-  
-  // Lähetä lomake
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('Lomake lähetetty seuraavilla tiedoilla:', formData)
-    alert(`Kiitos yhteydenotosta, ${formData.name}!`)
+    setFormData((prev) => ({ ...prev, [name]: value }))
+    logEvent(`✏️ Lomakekenttä '${name}' päivitetty arvoon: ${value}`)
   }
 
-  // Renderöi komponentti
+  // 🔹 Lähetä lomake backendille
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    logEvent(`📨 Yritetään lähettää yhteydenottolomake käyttäjältä: ${formData.name}`)
+
+    try {
+      const res = await fetch("http://localhost:3001/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setStatus({ success: false, message: data.error || "Lähetys epäonnistui" })
+        logEvent(`❌ Yhteydenottolomakkeen lähetys epäonnistui: ${data.error || "Tuntematon virhe"}`)
+      } else {
+        setStatus({ success: true, message: "✅ Kiitos yhteydenotosta!" })
+        logEvent(`✅ Yhteydenottolomake lähetetty: ${formData.name} <${formData.email}>`)
+        setFormData({ name: "", email: "", message: "" })  // Tyhjennä lomake
+      }
+    } catch (err) {
+      console.error("❌ Virhe lähetyksessä:", err)
+      setStatus({ success: false, message: "Yhteysvirhe palvelimeen" })
+      logEvent(`❌ Lomakkeen lähetys epäonnistui: ${err.message}`)
+    }
+  }
+
+  // 🔹 Näytä lomake
   return (
     <div className="contact-container">
       <h1>Ota yhteyttä</h1>
+
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="name">Nimi:</label>
@@ -39,6 +67,7 @@ function Contact() {
             required
           />
         </div>
+
         <div>
           <label htmlFor="email">Sähköposti:</label>
           <input
@@ -50,6 +79,7 @@ function Contact() {
             required
           />
         </div>
+
         <div>
           <label htmlFor="message">Viesti:</label>
           <textarea
@@ -61,10 +91,17 @@ function Contact() {
             required
           ></textarea>
         </div>
+
+        {status && (
+          <p style={{ color: status.success ? "green" : "red" }}>
+            {status.message}
+          </p>
+        )}
+
         <button type="submit">Lähetä</button>
       </form>
     </div>
-  );
+  )
 }
 
 export default Contact

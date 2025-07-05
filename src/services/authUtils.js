@@ -1,4 +1,6 @@
-import { logEvent } from './loggerClient.js' // tai muuta polku oikeaksi
+//authUtils.js
+
+import { logEvent } from './loggerClient.js'
 
 /**
  * Palauttaa nykyisen käyttäjän tiedot JWT-tokenista.

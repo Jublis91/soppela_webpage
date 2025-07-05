@@ -1,7 +1,0 @@
-//settings.json
-// This file contains the settings for the application, including paths to images.
-
-{
-    "backgroundImage": "background.JPEG",
-    "profileImage": "emma.jpg"
-}

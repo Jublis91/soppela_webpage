@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { getCurrentUser } from '../services/authUtils'
+import { logEvent } from '../services/loggerClient' // 🔁 Lokitus
 
 export default function PortfolioImages() {
   const user = getCurrentUser()
@@ -11,23 +12,27 @@ export default function PortfolioImages() {
 
   const isEditor = user && (user.role === 'admin' || user.role === 'owner')
 
-  // Lataa kuvat palvelimelta
+  // 🔁 Hakee kuvat palvelimelta
   const fetchImages = () => {
     fetch("http://localhost:3001/api/images/portfolio_images")
-    .then((res) => res.json())
-    .then((data) => {
-      setImages(data)
-      console.log("✅ Kuvat ladattu:", data)
-    })
-    .catch((err) => console.error("❌ Kuvien lataus epäonnistui:", err))
+      .then((res) => res.json())
+      .then((data) => {
+        setImages(data)
+        console.log("✅ Kuvat ladattu:", data)
+        logEvent("[PortfolioImages] ✅ Kuvat ladattu onnistuneesti")
+      })
+      .catch((err) => {
+        console.error("❌ Kuvien lataus epäonnistui:", err)
+        logEvent(`[PortfolioImages] ❌ Kuvien lataus epäonnistui: ${err.message}`)
+      })
   }
 
-  // Lataa kuvat komponentin latautuessa
+  // 📥 Haetaan kuvat komponentin latautuessa
   useEffect(() => {
     fetchImages()
   }, [])
 
-  // Lataa kuva palvelimelle
+  // ⬆️ Lähettää uuden kuvan palvelimelle
   const handleUpload = (e) => {
     const file = e.target.files[0]
     if (!file) return
@@ -36,46 +41,59 @@ export default function PortfolioImages() {
     formData.append("image", file)
 
     setUploading(true)
+    logEvent(`[PortfolioImages] ⬆️ Käyttäjä valitsi kuvan: ${file.name}`)
 
-    // Lähetetään kuva palvelimelle
     fetch("http://localhost:3001/api/images/portfolio_images", {
       method: "POST",
+      headers: {
+        Authorization: `Bearer ${user?.token}`
+      },
       body: formData,
     })
-    .then((res) => res.json())
-    .then(() => {
-      console.log("✅ Kuva lisätty")
-      fetchImages()
-    })
-    .catch((err) => {
-      console.error("❌ Kuvan lisäys epäonnistui:", err)
-    })
-    .finally(() => {
-      setUploading(false)
-    })
+      .then((res) => res.json())
+      .then(() => {
+        console.log("✅ Kuva lisätty")
+        logEvent(`[PortfolioImages] ✅ Kuva lisätty: ${file.name}`)
+        fetchImages()
+      })
+      .catch((err) => {
+        console.error("❌ Kuvan lisäys epäonnistui:", err)
+        logEvent(`[PortfolioImages] ❌ Kuvan lisäys epäonnistui: ${err.message}`)
+      })
+      .finally(() => setUploading(false))
   }
 
-  // Poista kuva palvelimelta
+  // 🗑️ Poistaa kuvan palvelimelta
   const handleDelete = (src) => {
     const filename = src.split("/").pop()
 
+    logEvent(`[PortfolioImages] 🗑️ Poistetaan kuva: ${filename}`)
+
     fetch(`http://localhost:3001/api/images/portfolio_images/${filename}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${user?.token}`
+      }
     })
       .then((res) => res.json())
       .then(() => {
         console.log(`🗑️ Kuva poistettu: ${filename}`)
+        logEvent(`[PortfolioImages] 🗑️ Kuva poistettu: ${filename}`)
         fetchImages()
         if (selectedImage === src) setSelectedImage(null)
       })
-      .catch((err) => console.error("❌ Poistovirhe:", err))
+      .catch((err) => {
+        console.error("❌ Poistovirhe:", err)
+        logEvent(`[PortfolioImages] ❌ Kuvan poisto epäonnistui: ${err.message}`)
+      })
   }
 
-  // Renderöi kuvat
+  // 🖼️ Renderöi käyttöliittymän
   return (
     <div className="soppela-images">
       <h1>Portfolio kuvat</h1>
 
+      {/* ✅ Kuvalataus näkyy vain ylläpitäjille */}
       {isEditor && (
         <>
           <input type="file" accept="image/*" onChange={handleUpload} />
@@ -83,6 +101,7 @@ export default function PortfolioImages() {
         </>
       )}
 
+      {/* ✅ Näytettävät kuvat */}
       <div className="images">
         {images.map((src, index) => (
           <div key={index} className="image-wrapper">
@@ -91,6 +110,7 @@ export default function PortfolioImages() {
               alt={`Gallery Image ${index + 1}`}
               onClick={() => {
                 console.log(`🖼️ Klikattiin kuvaa: ${src}`)
+                logEvent(`[PortfolioImages] 🖼️ Kuva avattu: ${src}`)
                 setSelectedImage(src)
               }}
             />
@@ -101,13 +121,19 @@ export default function PortfolioImages() {
         ))}
       </div>
 
+      {/* ✅ Valitun kuvan esikatselu */}
       {selectedImage && (
         <div className="selected-image">
           <img
             src={`http://localhost:3001${selectedImage}`}
             alt="Valittu kuva"
           />
-          <button onClick={() => setSelectedImage(null)}>Sulje</button>
+          <button onClick={() => {
+            setSelectedImage(null)
+            logEvent("[PortfolioImages] Suljettiin suurennettu kuva")
+          }}>
+            Sulje
+          </button>
         </div>
       )}
     </div>
