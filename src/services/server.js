@@ -1,4 +1,5 @@
 //server.js
+/* eslint-env node */
 
 // ✅ Perusmoduulit ja tarvittavat paketit
 import express from "express"
@@ -10,12 +11,14 @@ import jwt from "jsonwebtoken"
 import authRoutes from "./auth.js"
 import { logEvent } from "./logger.js"
 import { requireAuth, requireRole } from './middleware.js'
-import { fileURLToPath } from 'url'
+//import { fileURLToPath } from 'url'
 import nodemailer from "nodemailer"
+import process from 'node:process'
 
 // 🗂️ Selvitetään tiedoston sijainti (ESM-tuki)
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+//const __filename = fileURLToPath(import.meta.url)
+//const __dirname = path.dirname(__filename)
+import process from 'node:process'
 
 // 📦 Perusasetukset
 const app = express()
@@ -56,9 +59,11 @@ app.post("/api/logs", (req, res) => {
   if (authHeader) {
     const token = authHeader.split(" ")[1]
     try {
-      const decoded = jwt.verify(token, 'SECRET')
+      const decoded = jwt.verify(token, process.env.JWT_SECRET)
       username = decoded.username || 'tuntematon'
-    } catch {}
+    } catch {
+      // ignore invalid token
+    }
   }
 
   const { message } = req.body
@@ -202,14 +207,14 @@ app.post("/api/contact", async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.EMAIL_USER || "juuso.nikander91@gmail.com",
-      pass: process.env.EMAIL_PASS || "your-app-password"
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
     }
   })
 
   const mailOptions = {
     from: email,
-    to: process.env.EMAIL_USER || "juuso.nikander91@gmail.com",
+    to: process.env.EMAIL_USER,
     subject: `Yhteydenotto: ${name}`,
     text: `Nimi: ${name}\nSähköposti: ${email}\n\nViesti:\n${message}`
   }

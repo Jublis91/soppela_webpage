@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { getCurrentUser } from '../services/authUtils'
 import { logEvent } from '../services/loggerClient'  // 🔁 Lisätty lokitus
 
+const API_URL = import.meta.env.VITE_API_URL
+
 export default function SoppelaImages() {
   const user = getCurrentUser()
   const [images, setImages] = useState([])
@@ -15,7 +17,7 @@ export default function SoppelaImages() {
   // 📥 Hae kuvat palvelimelta
   const fetchImages = () => {
     console.log("[SoppelaImages] 🔄 Haetaan kuvat...")
-    fetch("http://localhost:3001/api/images/soppela_images")
+    fetch(`${API_URL}/api/images/soppela_images`)
       .then((res) => res.json())
       .then((data) => {
         setImages(data)
@@ -45,7 +47,7 @@ export default function SoppelaImages() {
     logEvent(`[SoppelaImages] ⬆️ Ladataan kuva: ${file.name}`)
     setUploading(true)
 
-    fetch("http://localhost:3001/api/images/soppela_images", {
+    fetch(`${API_URL}/api/images/soppela_images`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${user?.token}`
@@ -70,7 +72,7 @@ export default function SoppelaImages() {
   // 🗑️ Poista kuva
   const handleDelete = (src) => {
     const filename = src.split("/").pop()
-    const url = `http://localhost:3001/api/images/soppela_images/${filename}`
+    const url = `${API_URL}/api/images/soppela_images/${filename}`
 
     console.log(`[SoppelaImages] 🗑️ Poistetaan kuva: ${filename}`)
     logEvent(`[SoppelaImages] 🗑️ Käyttäjä poisti kuvan: ${filename}`)
@@ -127,7 +129,7 @@ export default function SoppelaImages() {
           return (
             <div key={index} className="image-wrapper">
               <img
-                src={`http://localhost:3001${src}`}
+                src={`${API_URL}${src}`}
                 alt={`Kuva ${index + 1}`}
                 onClick={() => {
                   console.log(`🖼️ Klikattiin kuvaa: ${src}`)
@@ -150,7 +152,7 @@ export default function SoppelaImages() {
       {selectedImage && (
         <div className="selected-image">
           <img
-            src={`http://localhost:3001${selectedImage}`}
+            src={`${API_URL}${selectedImage}`}
             alt="Valittu kuva"
           />
           <button onClick={() => {

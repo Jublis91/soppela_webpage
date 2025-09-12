@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { getCurrentUser } from '../services/authUtils'
 import { logEvent } from '../services/loggerClient'
 
+const API_URL = import.meta.env.VITE_API_URL
+
 function Book() {
   const user = getCurrentUser()
   const [content, setContent] = useState("")
@@ -13,7 +15,7 @@ function Book() {
   // 🔄 Haetaan sisältö sivun latautuessa
   useEffect(() => {
     logEvent("📖 Ladataan kirja-sivun sisältö")
-    fetch("http://localhost:3001/api/book")
+    fetch(`${API_URL}/api/book`)
       .then((res) => res.json())
       .then((data) => {
         if (data.content) {
@@ -33,7 +35,7 @@ function Book() {
   // 💾 Tallenna muokattu sisältö
   const saveChanges = () => {
     logEvent("💾 Yritetään tallentaa muokattua kirja-sisältöä")
-    fetch("http://localhost:3001/api/book", {
+    fetch(`${API_URL}/api/book`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -122,7 +124,7 @@ function Book() {
                 <button onClick={saveChanges}>💾 Tallenna</button>
                 <button onClick={() => {
                   setEditing(false)
-                  logToServer("❌ Muokkaus peruutettu")
+                  logEvent("❌ Muokkaus peruutettu")
                 }}>❌ Peruuta</button>
               </>
             ) : (
@@ -135,7 +137,7 @@ function Book() {
                 <button onClick={() => {
                   setDraft(content)
                   setEditing(true)
-                  logToServer("✏️ Muokkaustila avattu kirja-sisällölle")
+                  logEvent("✏️ Muokkaustila avattu kirja-sisällölle")
                 }}>
                   ✏️ Muokkaa
                 </button>

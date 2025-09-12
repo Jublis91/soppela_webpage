@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import { getCurrentUser } from '../services/authUtils'
 import { logEvent } from '../services/loggerClient' // 🔁 Lokitus
 
+const API_URL = import.meta.env.VITE_API_URL
+
 export default function PortfolioImages() {
   const user = getCurrentUser()
   const [images, setImages] = useState([])
@@ -14,7 +16,7 @@ export default function PortfolioImages() {
 
   // 🔁 Hakee kuvat palvelimelta
   const fetchImages = () => {
-    fetch("http://localhost:3001/api/images/portfolio_images")
+    fetch(`${API_URL}/api/images/portfolio_images`)
       .then((res) => res.json())
       .then((data) => {
         setImages(data)
@@ -43,7 +45,7 @@ export default function PortfolioImages() {
     setUploading(true)
     logEvent(`[PortfolioImages] ⬆️ Käyttäjä valitsi kuvan: ${file.name}`)
 
-    fetch("http://localhost:3001/api/images/portfolio_images", {
+    fetch(`${API_URL}/api/images/portfolio_images`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${user?.token}`
@@ -69,7 +71,7 @@ export default function PortfolioImages() {
 
     logEvent(`[PortfolioImages] 🗑️ Poistetaan kuva: ${filename}`)
 
-    fetch(`http://localhost:3001/api/images/portfolio_images/${filename}`, {
+    fetch(`${API_URL}/api/images/portfolio_images/${filename}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${user?.token}`
@@ -106,7 +108,7 @@ export default function PortfolioImages() {
         {images.map((src, index) => (
           <div key={index} className="image-wrapper">
             <img
-              src={`http://localhost:3001${src}`}
+              src={`${API_URL}${src}`}
               alt={`Gallery Image ${index + 1}`}
               onClick={() => {
                 console.log(`🖼️ Klikattiin kuvaa: ${src}`)
@@ -125,7 +127,7 @@ export default function PortfolioImages() {
       {selectedImage && (
         <div className="selected-image">
           <img
-            src={`http://localhost:3001${selectedImage}`}
+            src={`${API_URL}${selectedImage}`}
             alt="Valittu kuva"
           />
           <button onClick={() => {

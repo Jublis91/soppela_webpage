@@ -18,8 +18,9 @@ A simple React + Express application used to experiment with Vite and server sid
 
 Set the following environment variables before running the server:
 
-- `EMAIL_USER` – email address used to send messages.
-- `EMAIL_PASS` – app password or SMTP password for the above account.
+ - `JWT_SECRET` – secret key used to sign and verify JSON Web Tokens.
+ - `EMAIL_USER` – email address used to send messages.
+ - `EMAIL_PASS` – app password or SMTP password for the above account.
 
 Optional:
 - `NODE_ENV` – set to `production` to disable development middleware.

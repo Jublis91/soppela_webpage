@@ -4,12 +4,14 @@ import { useState, useEffect } from "react"
 import { getCurrentUser } from '../services/authUtils'
 import { logEvent } from '../services/loggerClient' // 🔁 Lokitus
 
+const API_URL = import.meta.env.VITE_API_URL
+
 function Me() {
   const user = getCurrentUser()
   const [content, setContent] = useState("")
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState("")
-  const [profileImage, setProfileImage] = useState("/images/emma.jpg")
+  const [profileImage] = useState("/images/emma.jpg")
 
   const canEdit = user && (user.role === 'admin' || user.role === 'owner')
 
@@ -18,7 +20,7 @@ function Me() {
     console.log("[ME] 🚀 Haetaan tekstiä...")
     logEvent("[ME] Haetaan me-välilehden sisältöä")
 
-    fetch("http://localhost:3001/api/me")
+    fetch(`${API_URL}/api/me`)
       .then((res) => res.json())
       .then((data) => {
         if (data.content) {
@@ -46,7 +48,7 @@ function Me() {
     console.log("[ME] 💾 Tallennetaan palvelimelle...")
     logEvent("[ME] Yritetään tallentaa muokattua sisältöä")
 
-    fetch("http://localhost:3001/api/me", {
+    fetch(`${API_URL}/api/me`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

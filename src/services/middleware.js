@@ -1,6 +1,8 @@
 //middleware.js
+/* eslint-env node */
 
 import jwt from 'jsonwebtoken'
+import process from 'node:process'
 
 /**
  * Middleware: Tarkistaa, että pyyntö sisältää kelvollisen JWT-tokenin.
@@ -17,7 +19,7 @@ export function requireAuth(req, res, next) {
   const token = authHeader.split(' ')[1]
 
   try {
-    const decoded = jwt.verify(token, 'SECRET')
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
     req.user = decoded
     if (process.env.NODE_ENV !== 'production') {
       console.log(`🔐 Autentikoitu käyttäjä: ${decoded.username} (${decoded.role})`)

@@ -28,3 +28,4 @@ suunnitelma.md
 data/
 /public
 .env
+users.json

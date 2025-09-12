@@ -1,9 +1,11 @@
 //auth.js
+/* eslint-env node */
 
 import express from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import fs from 'fs'
+import process from 'node:process'
 import { logEvent } from './logger.js'
 
 const router = express.Router()
@@ -30,7 +32,7 @@ router.post('/login', async (req, res) => {
     username: user.username,
     role: user.role,
     mustChangePassword: user.mustChangePassword
-  }, 'SECRET', { expiresIn: '1h' })
+  }, process.env.JWT_SECRET, { expiresIn: '1h' })
   logEvent(`🔓 Käyttäjä kirjautui sisään: ${user.username} (${user.role})`)
   res.json({ token })
 })

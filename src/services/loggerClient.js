@@ -1,5 +1,7 @@
 // loggerClient.js
 
+const API_URL = import.meta.env.VITE_API_URL
+
 /**
  * Lähettää lokiviestin palvelimelle ja kehitysympäristössä myös konsoliin.
  * @param {string} message - Lokitettava viesti
@@ -12,7 +14,7 @@ export function logEvent(message) {
     message: `${timestamp} - ${message}`,
   }
 
-  fetch("/api/logs", {
+ fetch(`${API_URL}/api/logs`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

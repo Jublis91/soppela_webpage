@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { logEvent } from "../services/loggerClient"  // 🔹 Lisää lokitus
 
+const API_URL = import.meta.env.VITE_API_URL
+
 function Contact() {
   const [formData, setFormData] = useState({
     name: "",
@@ -25,7 +27,7 @@ function Contact() {
     logEvent(`📨 Yritetään lähettää yhteydenottolomake käyttäjältä: ${formData.name}`)
 
     try {
-      const res = await fetch("http://localhost:3001/api/contact", {
+      const res = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
