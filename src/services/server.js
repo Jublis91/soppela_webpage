@@ -18,7 +18,7 @@ import process from 'node:process'
 // 🗂️ Selvitetään tiedoston sijainti (ESM-tuki)
 //const __filename = fileURLToPath(import.meta.url)
 //const __dirname = path.dirname(__filename)
-import process from 'node:process'
+//import process from 'node:process'
 
 // 📦 Perusasetukset
 const app = express()
@@ -231,7 +231,11 @@ app.post("/api/contact", async (req, res) => {
 
 // =============================
 // 🚀 Käynnistetään palvelin
-app.listen(PORT, () => {
-  logEvent(`🚀 Palvelin käynnistyi porttiin ${PORT}`)
-  console.log(`✅ Palvelin käynnissä http://localhost:${PORT}`)
-})
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    logEvent(`🚀 Palvelin käynnistyi porttiin ${PORT}`)
+    console.log(`✅ Palvelin käynnissä http://localhost:${PORT}`)
+  })
+}
+
+export default app
