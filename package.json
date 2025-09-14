@@ -7,7 +7,8 @@
     "dev": "concurrently \"nodemon src/services/server.js\" \"vite --host\"",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "jest --reporters=default --reporters=./tests/testLogger.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
