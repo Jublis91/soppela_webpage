@@ -237,9 +237,8 @@ app.post("/api/images/:folder", requireAuth, requireRole('owner'), validateFolde
   res.json({ success: true, filename: req.file.filename })
 })
 
-app.delete("/api/images/:folder/:filename", requireAuth, requireRole('owner'), (req, res) => {
-  const { folder, filename } = req.params
-  const filePath = path.join(IMAGES_DIR, folder, filename)
+app.delete("/api/images/:folder/:filename", requireAuth, requireRole('owner'), validateFolderParam, validateFilenameParam, (req, res) => {
+  const filePath = req.filePath
   fs.unlink(filePath, (err) => {
     if (err) {
       if (err.code === 'ENOENT') {

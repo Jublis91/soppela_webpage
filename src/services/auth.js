@@ -5,12 +5,35 @@ import express from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import * as fs from 'fs'
+import path from 'node:path'
 import process from 'node:process'
 import { logEvent } from './logger.js'
+import { requireAuth } from './middleware.js'
 
 const router = express.Router()
 
-let users = JSON.parse(fs.readFileSync('data/users.json', 'utf8'))
+const DATA_DIR = path.resolve(process.cwd(), 'data')
+const USERS_FILE_PATH = path.join(DATA_DIR, 'users.json')
+
+function loadUsersFromDisk() {
+  try {
+    if (!fs.existsSync(USERS_FILE_PATH)) {
+      return []
+    }
+
+    const raw = fs.readFileSync(USERS_FILE_PATH, 'utf8').trim()
+    if (!raw) {
+      return []
+    }
+
+    return JSON.parse(raw)
+  } catch (err) {
+    logEvent(`❌ Käyttäjätiedoston lukeminen epäonnistui: ${err.message}`)
+    return []
+  }
+}
+
+let users = loadUsersFromDisk()
 
 // Kirjautuminen
 router.post('/login', async (req, res) => {
@@ -67,8 +90,9 @@ router.post('/change-password', requireAuth, async (req, res) => {
   users[userIndex].mustChangePassword = false
 
   try {
-    fs.writeFileSync('data/users.json', JSON.stringify(users, null, 2))
-    users = JSON.parse(fs.readFileSync('data/users.json', 'utf8')) // päivitä muistista
+    fs.mkdirSync(DATA_DIR, { recursive: true })
+    fs.writeFileSync(USERS_FILE_PATH, JSON.stringify(users, null, 2))
+    users = loadUsersFromDisk()
     logEvent(`🔐 Salasana vaihdettu onnistuneesti käyttäjälle '${username}'`)
     res.json({ message: 'Salasana vaihdettu onnistuneesti' })
   } catch (err) {
