@@ -3,11 +3,10 @@
 
 // ✅ Perusmoduulit ja tarvittavat paketit
 import express from "express"
-import fs from "fs"
+import * as fs from "fs"
 import cors from "cors"
 import path from "path"
 import multer from "multer"
-import jwt from "jsonwebtoken"
 import authRoutes from "./auth.js"
 import { logEvent } from "./logger.js"
 import { requireAuth, requireRole } from './middleware.js'
@@ -24,6 +23,51 @@ import process from 'node:process'
 const app = express()
 const PORT = 3001
 const IMAGES_DIR = path.join(process.cwd(), "public/images")
+const IMAGES_BASE_PATH = path.resolve(IMAGES_DIR)
+
+fs.mkdirSync(IMAGES_DIR, { recursive: true })
+
+const SAFE_FOLDER_REGEX = /^[A-Za-z0-9_-]+$/
+const SAFE_FILENAME_REGEX = /^[A-Za-z0-9_.-]+$/
+
+function sanitizeSegment(segment, regex, type) {
+  if (typeof segment !== 'string' || !regex.test(segment) || segment.includes('..') || path.isAbsolute(segment)) {
+    throw new Error(`Virheellinen ${type}`)
+  }
+  return segment
+}
+
+function resolveImagePath(...segments) {
+  const resolvedPath = path.resolve(IMAGES_BASE_PATH, ...segments)
+  if (resolvedPath !== IMAGES_BASE_PATH && !resolvedPath.startsWith(`${IMAGES_BASE_PATH}${path.sep}`)) {
+    throw new Error('Polku ei ole sallittu')
+  }
+  return resolvedPath
+}
+
+function validateFolderParam(req, res, next) {
+  try {
+    const safeFolder = sanitizeSegment(req.params.folder, SAFE_FOLDER_REGEX, 'kansion nimi')
+    req.safeFolder = safeFolder
+    req.folderPath = resolveImagePath(safeFolder)
+    next()
+  } catch (error) {
+    logEvent(`⛔ Virheellinen kansion nimi '${req.params.folder}': ${error.message}`)
+    res.status(400).json({ error: 'Virheellinen kansion nimi' })
+  }
+}
+
+function validateFilenameParam(req, res, next) {
+  try {
+    const safeFilename = sanitizeSegment(req.params.filename, SAFE_FILENAME_REGEX, 'tiedoston nimi')
+    req.safeFilename = safeFilename
+    req.filePath = resolveImagePath(req.safeFolder ?? sanitizeSegment(req.params.folder, SAFE_FOLDER_REGEX, 'kansion nimi'), safeFilename)
+    next()
+  } catch (error) {
+    logEvent(`⛔ Virheellinen tiedoston nimi '${req.params.filename}': ${error.message}`)
+    res.status(400).json({ error: 'Virheellinen tiedoston nimi' })
+  }
+}
 
 // 🛠️ Apufunktiot JSON-tiedostojen lukemiseen/kirjoittamiseen
 const readJSON = (filePath) => JSON.parse(fs.readFileSync(filePath, "utf-8"))
@@ -32,16 +76,34 @@ const writeJSON = (filePath, data) => fs.writeFileSync(filePath, JSON.stringify(
 // 💾 Multer: tiedostojen tallennus
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    let targetPath = IMAGES_DIR
-    if (req.params.folder) {
-      targetPath = path.join(IMAGES_DIR, req.params.folder)
+    try {
+      const folderPath = req.folderPath ?? resolveImagePath(sanitizeSegment(req.params.folder, SAFE_FOLDER_REGEX, 'kansion nimi'))
+      fs.mkdirSync(folderPath, { recursive: true })
+      cb(null, folderPath)
+    } catch (error) {
+      cb(error)
     }
-    fs.mkdirSync(targetPath, { recursive: true })
-    cb(null, targetPath)
   },
-  filename: (req, file, cb) => cb(null, file.originalname)
+  filename: (req, file, cb) => {
+    try {
+      const safeName = sanitizeSegment(file.originalname, SAFE_FILENAME_REGEX, 'tiedoston nimi')
+      cb(null, safeName)
+    } catch (error) {
+      cb(error)
+    }
+  }
 })
 const upload = multer({ storage })
+
+const uploadImage = (req, res, next) => {
+  upload.single("image")(req, res, (err) => {
+    if (err) {
+      logEvent(`❌ Kuvan lataus epäonnistui: ${err.message}`)
+      return res.status(400).json({ error: "Virheellinen kuvatiedosto" })
+    }
+    next()
+  })
+}
 
 // =============================
 // 🔧 Middlewaret (oikeassa järjestyksessä)
@@ -53,18 +115,8 @@ app.use("/images", express.static("public/images"))
 // =============================
 // 🧾 Lokitus ennen yleistä middlewarea
 // =============================
-app.post("/api/logs", (req, res) => {
-  const authHeader = req.headers.authorization
-  let username = "vierailija"
-  if (authHeader) {
-    const token = authHeader.split(" ")[1]
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET)
-      username = decoded.username || 'tuntematon'
-    } catch {
-      // ignore invalid token
-    }
-  }
+app.post("/api/logs", requireAuth, (req, res) => {
+  const username = req.user?.username ?? 'tuntematon'
 
   const { message } = req.body
   if (!message) return res.status(400).json({ error: "Lokiviesti puuttuu" })
@@ -153,27 +205,30 @@ app.get("/api/folders", (req, res) => {
       logEvent(`❌ Kansioiden listaus epäonnistui: ${err.message}`)
       return res.status(500).json({ error: "Kansioluettelo epäonnistui" })
     }
-    const folders = files.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name)
+    const folders = files
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name)
+      .filter(name => SAFE_FOLDER_REGEX.test(name))
+
     logEvent(`📁 Kansiot listattu: ${folders.join(", ")}`)
     res.json(folders)
   })
 })
 
-app.get("/api/images/:folder", (req, res) => {
-  const folder = req.params.folder
-  const folderPath = path.join(IMAGES_DIR, folder)
-  fs.readdir(folderPath, (err, files) => {
+app.get("/api/images/:folder", validateFolderParam, (req, res) => {
+  fs.readdir(req.folderPath, (err, files) => {
     if (err) {
-      logEvent(`❌ Kuvien listaus epäonnistui (${folder}): ${err.message}`)
+      logEvent(`❌ Kuvien listaus epäonnistui (${req.safeFolder}): ${err.message}`)
       return res.status(500).json({ error: "Kuvien haku epäonnistui" })
     }
-    const imagePaths = files.map(file => `/images/${folder}/${file}`)
-    logEvent(`🖼️ Kuvat listattu kansiosta '${folder}': ${files.length} kpl`)
+    const safeFiles = files.filter(file => SAFE_FILENAME_REGEX.test(file))
+    const imagePaths = safeFiles.map(file => `/images/${req.safeFolder}/${file}`)
+    logEvent(`🖼️ Kuvat listattu kansiosta '${req.safeFolder}': ${imagePaths.length} kpl`)
     res.json(imagePaths)
   })
 })
 
-app.post("/api/images/:folder", upload.single("image"), requireAuth, requireRole('owner'), (req, res) => {
+app.post("/api/images/:folder", requireAuth, requireRole('owner'), validateFolderParam, uploadImage, (req, res) => {
   if (!req.file) {
     logEvent("⚠️ Kuvaa ei toimitettu ladattaessa")
     return res.status(400).json({ error: "Ei kuvaa ladattavaksi" })
@@ -187,10 +242,14 @@ app.delete("/api/images/:folder/:filename", requireAuth, requireRole('owner'), (
   const filePath = path.join(IMAGES_DIR, folder, filename)
   fs.unlink(filePath, (err) => {
     if (err) {
-      logEvent(`❌ Kuvaa '${filename}' ei voitu poistaa: ${err.message}`)
+      if (err.code === 'ENOENT') {
+        logEvent(`⚠️ Kuvaa '${req.safeFilename}' ei löytynyt kansiosta ${req.safeFolder}`)
+        return res.status(404).json({ error: "Kuvaa ei löydy" })
+      }
+      logEvent(`❌ Kuvaa '${req.safeFilename}' ei voitu poistaa: ${err.message}`)
       return res.status(500).json({ error: "Kuvan poisto epäonnistui" })
     }
-    logEvent(`🗑️ Kuva poistettu: ${filename} kansiosta ${folder}`)
+    logEvent(`🗑️ Kuva poistettu: ${req.safeFilename} kansiosta ${req.safeFolder}`)
     res.json({ success: true })
   })
 })

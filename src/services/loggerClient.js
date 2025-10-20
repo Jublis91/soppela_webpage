@@ -14,16 +14,18 @@ export function logEvent(message) {
     message: `${timestamp} - ${message}`,
   }
 
- fetch(`${API_URL}/api/logs`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    },
-    body: JSON.stringify(logPayload)
-  }).catch(err => {
-    console.error("❌ Lokituksen POST-pyyntö epäonnistui:", err)
-  })
+ if (token) {
+    fetch(`${API_URL}/api/logs`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(logPayload)
+    }).catch(err => {
+      console.error("❌ Lokituksen POST-pyyntö epäonnistui:", err)
+    })
+  }
 
   // Kehitysympäristössä tulostetaan konsoliin
   if (import.meta.env.DEV) {

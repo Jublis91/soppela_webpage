@@ -4,7 +4,7 @@
 import express from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import fs from 'fs'
+import * as fs from 'fs'
 import process from 'node:process'
 import { logEvent } from './logger.js'
 
@@ -38,8 +38,15 @@ router.post('/login', async (req, res) => {
 })
 
 // Salasanan vaihto
-router.post('/change-password', async (req, res) => {
-  const { username, oldPassword, newPassword } = req.body
+router.post('/change-password', requireAuth, async (req, res) => {
+  const { oldPassword, newPassword } = req.body
+  const username = req.user.username
+
+  if (!oldPassword || !newPassword) {
+    logEvent(`⚠️ Käyttäjä ${username} yritti vaihtaa salasanan puutteellisilla tiedoilla`)
+    return res.status(400).json({ error: 'Pakolliset kentät puuttuvat' })
+  }
+
   const userIndex = users.findIndex(u => u.username === username)
 
   if (userIndex === -1) {

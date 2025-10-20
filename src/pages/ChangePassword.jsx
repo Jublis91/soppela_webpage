@@ -42,9 +42,10 @@ export default function ChangePassword() {
       const res = await fetch(`${API_URL}/api/change-password`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ username, oldPassword, newPassword })
+        body: JSON.stringify({ oldPassword, newPassword })
       })
 
       const data = await res.json()

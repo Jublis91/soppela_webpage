@@ -66,9 +66,15 @@ describe('auth routes', () => {
   })
 
   test('change-password succeeds with correct old password and saves mustChangePassword false', async () => {
+    const login = await request(app)
+      .post('/api/login')
+      .send({ username: 'testuser', password: 'password123' })
+
+    const token = login.body.token
     const res = await request(app)
       .post('/api/change-password')
-      .send({ username: 'testuser', oldPassword: 'password123', newPassword: 'newpass' })
+      .set('Authorization', `Bearer ${token}`)
+      .send({ oldPassword: 'password123', newPassword: 'newpass' })
 
     expect(res.status).toBe(200)
     expect(fs.writeFileSync).toHaveBeenCalled()
@@ -80,9 +86,25 @@ describe('auth routes', () => {
   })
 
   test('change-password fails with wrong old password', async () => {
+    const login = await request(app)
+      .post('/api/login')
+      .send({ username: 'testuser', password: 'password123' })
+
+    const token = login.body.token
+
     const res = await request(app)
       .post('/api/change-password')
-      .send({ username: 'testuser', oldPassword: 'wrong', newPassword: 'newpass' })
+      .set('Authorization', `Bearer ${token}`)
+      .send({ oldPassword: 'wrong', newPassword: 'newpass' })
+
+    expect(res.status).toBe(401)
+    expect(fs.writeFileSync).not.toHaveBeenCalled()
+  })
+
+  test('change-password fails without authentication', async () => {
+    const res = await request(app)
+      .post('/api/change-password')
+      .send({ oldPassword: 'password123', newPassword: 'newpass' })
 
     expect(res.status).toBe(401)
     expect(fs.writeFileSync).not.toHaveBeenCalled()
