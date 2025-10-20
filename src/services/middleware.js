@@ -2,7 +2,7 @@
 /* eslint-env node */
 
 import jwt from 'jsonwebtoken'
-import process from 'node:process'
+import { getJwtSecret } from './config.js'
 
 /**
  * Middleware: Tarkistaa, että pyyntö sisältää kelvollisen JWT-tokenin.
@@ -19,7 +19,14 @@ export function requireAuth(req, res, next) {
   const token = authHeader.split(' ')[1]
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const jwtSecret = getJwtSecret()
+
+    if (!jwtSecret) {
+      console.error('❌ Tokenin tarkistus epäonnistui: JWT-salaisuutta ei ole asetettu')
+      return res.status(503).json({ error: 'Autentikointipalvelu ei ole käytettävissä' })
+    }
+
+    const decoded = jwt.verify(token, jwtSecret)
     req.user = decoded
     if (process.env.NODE_ENV !== 'production') {
       console.log(`🔐 Autentikoitu käyttäjä: ${decoded.username} (${decoded.role})`)

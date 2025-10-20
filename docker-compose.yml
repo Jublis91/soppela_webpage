@@ -1,22 +1,16 @@
+version: "3.9"
 services:
-  soppela-webpage-dev:
-    image: node:20-bookworm
-    user: "node"
-    working_dir: /app
-    volumes:
-      - /mnt/user/appdata/soppela_webpage:/app
-      - soppela_webpage_node_modules:/app/node_modules
-    environment:
-      NODE_ENV: development
-      CHOKIDAR_USEPOLLING: "true"
-      WATCHPACK_POLLING: "true"
-      JWT_SECRET: ${JWT_SECRET}
-      EMAIL_USER: ${EMAIL_USER}
-      EMAIL_PASS: ${EMAIL_PASS}
+  soppela_web:
+    build: .
+    container_name: soppela_web
     ports:
-      - "5173:5173"
-      - "3000:3000"
-    command: ["npm", "run", "dev"]
+      - "3001:3001"
     restart: unless-stopped
-volumes:
-  soppela_webpage_node_modules:
+    environment:
+      - NODE_ENV=production
+    networks:
+      - soppela_net
+
+networks:
+  soppela_net:
+    driver: bridge

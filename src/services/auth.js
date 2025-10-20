@@ -6,13 +6,12 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import * as fs from 'fs'
 import path from 'node:path'
-import process from 'node:process'
 import { logEvent } from './logger.js'
 import { requireAuth } from './middleware.js'
+import { DATA_DIR, getJwtSecret } from './config.js'
 
 const router = express.Router()
 
-const DATA_DIR = path.resolve(process.cwd(), 'data')
 const USERS_FILE_PATH = path.join(DATA_DIR, 'users.json')
 
 function loadUsersFromDisk() {
@@ -51,11 +50,19 @@ router.post('/login', async (req, res) => {
     return res.status(401).json({ error: 'Virheellinen salasana' })
   }
 
+  const jwtSecret = getJwtSecret()
+
+  if (!jwtSecret) {
+    logEvent('❌ Kirjautuminen epäonnistui – JWT-salaisuutta ei voitu muodostaa')
+    return res.status(500).json({ error: 'Kirjautuminen ei ole käytettävissä' })
+  }
+
+
   const token = jwt.sign({
     username: user.username,
     role: user.role,
     mustChangePassword: user.mustChangePassword
-  }, process.env.JWT_SECRET, { expiresIn: '1h' })
+  }, jwtSecret, { expiresIn: '1h' })
   logEvent(`🔓 Käyttäjä kirjautui sisään: ${user.username} (${user.role})`)
   res.json({ token })
 })
