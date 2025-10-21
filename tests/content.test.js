@@ -20,6 +20,7 @@ afterEach(() => {
 describe('ME content endpoints', () => {
   test('GET /api/me returns JSON and logs success', async () => {
     const data = { content: 'Hello' }
+    jest.spyOn(fs, 'existsSync').mockReturnValue(true)
     jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(data))
     const logSpy = jest.spyOn(logger, 'logEvent').mockImplementation(() => {})
 

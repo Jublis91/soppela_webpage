@@ -91,11 +91,31 @@ function resolveDataPath(fileName) {
   return path.join(DATA_DIR, fileName)
 }
 
-const readJSON = (fileName) => {
+function readJSON(fileName, defaultValue = {}) {
   ensureDataDir()
-  return JSON.parse(fs.readFileSync(resolveDataPath(fileName), "utf-8"))
+  const filePath = resolveDataPath(fileName)
+
+  if (!fs.existsSync(filePath)) {
+    if (defaultValue !== undefined) {
+      writeJSON(fileName, defaultValue)
+      return defaultValue
+    }
+    throw new Error(`Tiedostoa ${fileName} ei löydy`)
+  }
+
+  try {
+    const raw = fs.readFileSync(filePath, "utf-8")
+    return JSON.parse(raw)
+  } catch (error) {
+    if (defaultValue !== undefined) {
+      writeJSON(fileName, defaultValue)
+      return defaultValue
+    }
+    throw error
+  }
 }
-const writeJSON = (fileName, data) => {
+
+function writeJSON(fileName, data) {
   ensureDataDir()
   fs.writeFileSync(resolveDataPath(fileName), JSON.stringify(data, null, 2), "utf-8")
 }
@@ -162,7 +182,10 @@ app.use((req, res, next) => {
 // 🧑‍💻 Me-välilehti
 app.get("/api/me", (req, res) => {
   try {
-    const data = readJSON("me.json")
+    const data = readJSON("me.json", {
+      content: "",
+      lastModified: null
+    })
     logEvent("📄 Me-välilehti haettu onnistuneesti")
     res.json(data)
   } catch (err) {
@@ -195,7 +218,10 @@ app.post("/api/me", requireAuth, requireRole('owner'), (req, res) => {
 // 📖 Kirja-välilehti
 app.get("/api/book", (req, res) => {
   try {
-    const data = readJSON("book.json")
+    const data = readJSON("book.json", {
+      content: "",
+      lastModified: null
+    })
     logEvent("📖 Kirja-välilehti haettu onnistuneesti")
     res.json(data)
   } catch (err) {

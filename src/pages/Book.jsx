@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react"
 import { getCurrentUser } from '../services/authUtils'
 import { logEvent } from '../services/loggerClient'
-
-const API_URL = import.meta.env.VITE_API_URL
+import { API_URL } from '../services/apiConfig'
 
 function Book() {
   const user = getCurrentUser()
@@ -15,7 +14,7 @@ function Book() {
   // 🔄 Haetaan sisältö sivun latautuessa
   useEffect(() => {
     logEvent("📖 Ladataan kirja-sivun sisältö")
-    fetch(`${API_URL}/api/book`)
+    fetch(`/data/book.json`)
       .then((res) => res.json())
       .then((data) => {
         if (data.content) {

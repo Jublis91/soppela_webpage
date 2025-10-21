@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react'
 import { getCurrentUser } from '../services/authUtils'
 import { logEvent } from '../services/loggerClient'  // 🔁 Lisätty lokitus
-
-const API_URL = import.meta.env.VITE_API_URL
+import { API_URL } from "../services/apiConfig"
 
 export default function SoppelaImages() {
   const user = getCurrentUser()

@@ -84,7 +84,7 @@ describe('images API', () => {
     const token = jwt.sign({ username: 'owner', role: 'owner' }, process.env.JWT_SECRET)
 
     const res = await request
-      .delete('/api/images/album/test.jpg')
+      .delete('/api/images/portfolio_images/test.jpg')
       .set('Authorization', `Bearer ${token}`)
 
     expect(res.status).toBe(200)

@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { logEvent } from '../services/loggerClient'; // 🔁 Lokitus
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from "../services/apiConfig"
 
 export default function Login() {
   const [username, setUsername] = useState('');

@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react"
 import { getCurrentUser } from '../services/authUtils'
 import { logEvent } from '../services/loggerClient' // 🔁 Lokitus
-
-const API_URL = import.meta.env.VITE_API_URL
+import { API_URL } from "../services/apiConfig"
 
 function Me() {
   const user = getCurrentUser()
@@ -20,7 +19,7 @@ function Me() {
     console.log("[ME] 🚀 Haetaan tekstiä...")
     logEvent("[ME] Haetaan me-välilehden sisältöä")
 
-    fetch(`${API_URL}/api/me`)
+    fetch(`/data/me.json`)
       .then((res) => res.json())
       .then((data) => {
         if (data.content) {
