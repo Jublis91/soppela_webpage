@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { getCurrentUser } from '../services/authUtils'
 import { logEvent } from '../services/loggerClient' // 🔁 Lokitus
 import { API_URL } from "../services/apiConfig"
+import { resolveImageUrl } from "../services/imageUtils"
 
 export default function PortfolioImages() {
   const user = getCurrentUser()
@@ -106,11 +107,12 @@ export default function PortfolioImages() {
       <div className="images">
         {images.map((image, index) => {
           const src = image.path || image
+          const imageUrl = resolveImageUrl(src)
           const updatedAt = image.updatedAt || null
           return (
             <div key={index} className="image-wrapper">
               <img
-                src={`${API_URL}${src}`}
+                src={imageUrl}
                 alt={`Gallery Image ${index + 1}`}
                 onClick={() => {
                   console.log(`🖼️ Klikattiin kuvaa: ${src}`)
@@ -133,7 +135,7 @@ export default function PortfolioImages() {
       {selectedImage && (
         <div className="selected-image">
           <img
-            src={`${API_URL}${selectedImage}`}
+            src={resolveImageUrl(selectedImage)}
             alt="Valittu kuva"
           />
           <button onClick={() => {

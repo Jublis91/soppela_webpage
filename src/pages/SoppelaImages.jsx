@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { getCurrentUser } from '../services/authUtils'
 import { logEvent } from '../services/loggerClient'  // 🔁 Lisätty lokitus
 import { API_URL } from "../services/apiConfig"
+import { resolveImageUrl } from "../services/imageUtils"
 
 export default function SoppelaImages() {
   const user = getCurrentUser()
@@ -124,11 +125,12 @@ export default function SoppelaImages() {
       <div className="images">
         {images.map((imageObj, index) => {
           const src = imageObj.path || imageObj
+          const imageUrl = resolveImageUrl(src)
           const updated = imageObj.updatedAt || null
           return (
             <div key={index} className="image-wrapper">
               <img
-                src={`${API_URL}${src}`}
+                src={imageUrl}
                 alt={`Kuva ${index + 1}`}
                 onClick={() => {
                   console.log(`🖼️ Klikattiin kuvaa: ${src}`)
@@ -151,7 +153,7 @@ export default function SoppelaImages() {
       {selectedImage && (
         <div className="selected-image">
           <img
-            src={`${API_URL}${selectedImage}`}
+            src={resolveImageUrl(selectedImage)}
             alt="Valittu kuva"
           />
           <button onClick={() => {
