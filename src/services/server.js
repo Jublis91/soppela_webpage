@@ -24,13 +24,14 @@ import process from 'node:process'
 const app = express()
 const PORT = 3001
 const PUBLIC_DIR = path.join(process.cwd(), "public")
-const IMAGES_BASE_PATH = path.resolve(PUBLIC_DIR)
+const IMAGES_BASE_PATH = path.resolve(PUBLIC_DIR, "images")
 const IMAGE_FOLDERS = ["portfolio_images", "soppela_images"]
 const EXTRA_ALLOWED_FOLDERS = ["images"]
 
 fs.mkdirSync(PUBLIC_DIR, { recursive: true })
+fs.mkdirSync(IMAGES_BASE_PATH, { recursive: true })
 IMAGE_FOLDERS.forEach(folder => {
-  fs.mkdirSync(path.join(PUBLIC_DIR, folder), { recursive: true })
+  fs.mkdirSync(path.join(IMAGES_BASE_PATH, folder), { recursive: true })
 })
 fs.mkdirSync(DATA_DIR, { recursive: true })
 
@@ -157,7 +158,7 @@ const uploadImage = (req, res, next) => {
 app.use(cors())
 app.use(express.json())
 app.use('/api', authRoutes)
-app.use("/images", express.static(PUBLIC_DIR))
+app.use("/images", express.static(IMAGES_BASE_PATH))
 
 // =============================
 // 🧾 Lokitus ennen yleistä middlewarea
