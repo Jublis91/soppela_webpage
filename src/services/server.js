@@ -3,7 +3,7 @@
 
 // ✅ Perusmoduulit ja tarvittavat paketit
 import express from "express"
-import * as fs from "fs"
+import fs from "fs"
 import cors from "cors"
 import path from "path"
 import multer from "multer"
@@ -26,6 +26,7 @@ const PORT = 3001
 const PUBLIC_DIR = path.join(process.cwd(), "public")
 const IMAGES_BASE_PATH = path.resolve(PUBLIC_DIR)
 const IMAGE_FOLDERS = ["portfolio_images", "soppela_images"]
+const EXTRA_ALLOWED_FOLDERS = ["images"]
 
 fs.mkdirSync(PUBLIC_DIR, { recursive: true })
 IMAGE_FOLDERS.forEach(folder => {
@@ -35,7 +36,7 @@ fs.mkdirSync(DATA_DIR, { recursive: true })
 
 const SAFE_FOLDER_REGEX = /^[A-Za-z0-9_-]+$/
 const SAFE_FILENAME_REGEX = /^[A-Za-z0-9_.-]+$/
-const ALLOWED_FOLDERS = new Set(IMAGE_FOLDERS)
+const ALLOWED_FOLDERS = new Set([...IMAGE_FOLDERS, ...EXTRA_ALLOWED_FOLDERS])
 
 function sanitizeSegment(segment, regex, type) {
   if (typeof segment !== 'string' || !regex.test(segment) || segment.includes('..') || path.isAbsolute(segment)) {

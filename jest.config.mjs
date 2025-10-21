@@ -2,6 +2,7 @@
 export default {
   testEnvironment: 'node',
   transform: {},                 // käytä Node ESM:ää, ei transpilausta
-  extensionsToTreatAsEsm: ['.js'],
+  extensionsToTreatAsEsm: ['.test.js'],
+  setupFilesAfterEnv: ['<rootDir>/tests/setupGlobals.js'],
   reporters: ['default', '<rootDir>/tests/testLogger.js'],
 };

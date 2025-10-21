@@ -20,8 +20,7 @@ function ensureLogFile() {
   }
 }
 
-// Kirjoittaa tapahtuman lokiin aikaleiman kanssa
-export function logEvent(message) {
+function defaultLogEventImplementation(message) {
   ensureLogFile()
 
   const timestamp = new Date().toISOString()
@@ -35,4 +34,25 @@ export function logEvent(message) {
 
   // Tulostetaan myös konsoliin
   console.log(logMessage.trim())
+}
+
+let currentLogEventImplementation = defaultLogEventImplementation
+
+// Kirjoittaa tapahtuman lokiin aikaleiman kanssa
+export function logEvent(message) {
+  currentLogEventImplementation(message)
+}
+
+export function __setLogEventImplementation(fn) {
+  if (typeof fn === 'function') {
+    currentLogEventImplementation = fn
+  }
+}
+
+export function __resetLogEventImplementation() {
+  currentLogEventImplementation = defaultLogEventImplementation
+}
+
+export function __getLogEventImplementation() {
+  return currentLogEventImplementation
 }

@@ -14,7 +14,7 @@ const router = express.Router()
 
 function loadUsersFromDisk() {
   try {
-    if (!fs.existsSync(USERS_FILE_PATH)) {
+    if (typeof fs.existsSync === 'function' && !fs.existsSync(USERS_FILE_PATH)) {
       return []
     }
 
