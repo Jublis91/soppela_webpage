@@ -105,22 +105,29 @@ export default function PortfolioImages() {
 
       {/* ✅ Näytettävät kuvat */}
       <div className="images">
-        {images.map((src, index) => (
-          <div key={index} className="image-wrapper">
-            <img
-              src={`${API_URL}${src}`}
-              alt={`Gallery Image ${index + 1}`}
-              onClick={() => {
-                console.log(`🖼️ Klikattiin kuvaa: ${src}`)
-                logEvent(`[PortfolioImages] 🖼️ Kuva avattu: ${src}`)
-                setSelectedImage(src)
-              }}
-            />
-            {isEditor && (
-              <button onClick={() => handleDelete(src)}>Poista</button>
-            )}
-          </div>
-        ))}
+        {images.map((image, index) => {
+          const src = image.path || image
+          const updatedAt = image.updatedAt || null
+          return (
+            <div key={index} className="image-wrapper">
+              <img
+                src={`${API_URL}${src}`}
+                alt={`Gallery Image ${index + 1}`}
+                onClick={() => {
+                  console.log(`🖼️ Klikattiin kuvaa: ${src}`)
+                  logEvent(`[PortfolioImages] 🖼️ Kuva avattu: ${src}`)
+                  setSelectedImage(src)
+                }}
+              />
+              {updatedAt && (
+                <p className="timestamp">Viimeksi muokattu: {new Date(updatedAt).toLocaleString('fi-FI')}</p>
+              )}
+              {isEditor && (
+                <button onClick={() => handleDelete(src)}>Poista</button>
+              )}
+            </div>
+          )
+        })}
       </div>
 
       {/* ✅ Valitun kuvan esikatselu */}

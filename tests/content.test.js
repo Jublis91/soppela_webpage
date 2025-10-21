@@ -1,7 +1,9 @@
 import request from 'supertest'
 import fs from 'fs'
+import path from 'path'
 import jwt from 'jsonwebtoken'
 import * as logger from '../src/services/logger.js'
+import { DATA_DIR } from '../src/services/config.js'
 
 process.env.NODE_ENV = 'test'
 process.env.JWT_SECRET = 'testsecret'
@@ -52,7 +54,7 @@ describe('ME content endpoints', () => {
 
     expect(res.status).toBe(200)
     expect(writeSpy).toHaveBeenCalledWith(
-      './data/me_db.json',
+      path.join(DATA_DIR, 'me.json'),
       expect.stringContaining('New content'),
       'utf-8'
     )

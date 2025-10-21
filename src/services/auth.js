@@ -8,11 +8,9 @@ import * as fs from 'fs'
 import path from 'node:path'
 import { logEvent } from './logger.js'
 import { requireAuth } from './middleware.js'
-import { DATA_DIR, getJwtSecret } from './config.js'
+import { USERS_FILE_PATH, getJwtSecret } from './config.js'
 
 const router = express.Router()
-
-const USERS_FILE_PATH = path.join(DATA_DIR, 'users.json')
 
 function loadUsersFromDisk() {
   try {
@@ -97,7 +95,7 @@ router.post('/change-password', requireAuth, async (req, res) => {
   users[userIndex].mustChangePassword = false
 
   try {
-    fs.mkdirSync(DATA_DIR, { recursive: true })
+    fs.mkdirSync(path.dirname(USERS_FILE_PATH), { recursive: true })
     fs.writeFileSync(USERS_FILE_PATH, JSON.stringify(users, null, 2))
     users = loadUsersFromDisk()
     logEvent(`🔐 Salasana vaihdettu onnistuneesti käyttäjälle '${username}'`)

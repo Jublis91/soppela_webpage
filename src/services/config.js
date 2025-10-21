@@ -6,8 +6,14 @@ import crypto from 'node:crypto'
 import process from 'node:process'
 
 const ROOT_DIR = process.cwd()
-const DATA_DIRECTORY = path.resolve(ROOT_DIR, 'data')
-const JWT_SECRET_FILE = path.join(DATA_DIRECTORY, 'jwt.secret')
+const SECURE_DIRECTORY = path.resolve(ROOT_DIR, 'secure')
+const PUBLIC_DIRECTORY = path.resolve(ROOT_DIR, 'public')
+const DATA_DIRECTORY = path.join(PUBLIC_DIRECTORY, 'data')
+const LOG_DIRECTORY = path.join(SECURE_DIRECTORY, 'logs')
+const LOG_FILE_PATH = path.join(LOG_DIRECTORY, 'activity.log')
+const USERS_FILE = path.join(SECURE_DIRECTORY, 'users.json')
+const JWT_SECRET_FILE = path.join(SECURE_DIRECTORY, 'jwt.secret')
+
 let cachedSecret
 
 function ensureDirectory(dir) {
@@ -15,6 +21,10 @@ function ensureDirectory(dir) {
     fs.mkdirSync(dir, { recursive: true })
   }
 }
+
+ensureDirectory(SECURE_DIRECTORY)
+ensureDirectory(LOG_DIRECTORY)
+ensureDirectory(DATA_DIRECTORY)
 
 function readSecretFromFile() {
   if (typeof fs.existsSync !== 'function' || !fs.existsSync(JWT_SECRET_FILE)) {
@@ -27,7 +37,7 @@ function readSecretFromFile() {
 
 function writeSecretToFile(secret) {
   try {
-    ensureDirectory(DATA_DIRECTORY)
+    ensureDirectory(SECURE_DIRECTORY)
     if (typeof fs.writeFileSync === 'function') {
       fs.writeFileSync(JWT_SECRET_FILE, `${secret}\n`, 'utf8')
     }
@@ -65,5 +75,9 @@ export function getJwtSecret() {
   return cachedSecret
 }
 
+export const SECURE_DIR = SECURE_DIRECTORY
 export const DATA_DIR = DATA_DIRECTORY
+export const LOG_DIR = LOG_DIRECTORY
+export const LOG_FILE = LOG_FILE_PATH
+export const USERS_FILE_PATH = USERS_FILE
 export const JWT_SECRET_PATH = JWT_SECRET_FILE

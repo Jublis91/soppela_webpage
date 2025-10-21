@@ -5,7 +5,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const logDir = path.join(__dirname, '..', 'logs')
+const logDir = path.join(__dirname, '..', 'secure', 'logs')
 const logFile = path.join(logDir, 'test_log.txt')
 
 class TestLogger {

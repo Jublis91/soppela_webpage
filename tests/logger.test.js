@@ -27,7 +27,7 @@ jest.unstable_mockModule('fs', () => ({
 // Import the logger after mocking fs
 const { logEvent } = await import('../src/services/logger.js')
 
-const logDir = path.resolve(process.cwd(), 'logs')
+const logDir = path.resolve(process.cwd(), 'secure', 'logs')
 const logPath = path.resolve(logDir, 'activity.log')
 
 beforeEach(() => {

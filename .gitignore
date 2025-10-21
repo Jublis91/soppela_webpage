@@ -29,3 +29,5 @@ data/
 /public
 .env
 users.json
+soppela.sh
+/secure

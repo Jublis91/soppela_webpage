@@ -1,0 +1,17 @@
+# Kehitysversio: ajaa "npm run dev" jatkuvasti
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Kopioidaan riippuvuudet ja asennetaan
+COPY package*.json ./
+RUN npm install
+
+# Kopioidaan kaikki lähdekoodit
+COPY . .
+
+# Avaa Viten oletusportti
+EXPOSE 5173
+
+# Käynnistetään dev-server kaikilla IP:illä
+CMD ["npm", "run", "dev", "--", "-H", "0.0.0.0"]

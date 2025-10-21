@@ -14,7 +14,9 @@ const fsMock = {
   ...realFs,
   readdir: jest.fn(),
   mkdirSync: jest.fn(),
-  unlink: jest.fn()
+  unlink: jest.fn(),
+  existsSync: jest.fn(),
+  statSync: jest.fn()
 }
 jest.unstable_mockModule('fs', () => ({ default: fsMock }))
 
@@ -35,34 +37,33 @@ describe('images API', () => {
     fsMock.readdir.mockReset()
     fsMock.mkdirSync.mockReset()
     fsMock.unlink.mockReset()
+    fsMock.existsSync.mockReset()
+    fsMock.statSync.mockReset()
+    fsMock.existsSync.mockImplementation(() => true)
   })
 
   test('GET /api/folders palauttaa listan', async () => {
-    fsMock.readdir.mockImplementation((dir, options, cb) => {
-      const callback = typeof options === 'function' ? options : cb
-      callback(null, [
-        { name: 'folder1', isDirectory: () => true },
-        { name: 'file.txt', isDirectory: () => false },
-        { name: 'folder2', isDirectory: () => true }
-      ])
-    })
 
     const res = await request.get('/api/folders')
 
     expect(res.status).toBe(200)
-    expect(res.body).toEqual(['folder1', 'folder2'])
-    expect(fsMock.readdir).toHaveBeenCalled()
+    expect(res.body).toEqual(['portfolio_images', 'soppela_images'])
+    expect(fsMock.existsSync).toHaveBeenCalled()
   })
 
   test('GET /api/images/:folder palauttaa listan', async () => {
     fsMock.readdir.mockImplementation((dir, cb) => {
       cb(null, ['img1.jpg', 'img2.png'])
     })
+    fsMock.statSync.mockReturnValue({ mtime: new Date('2024-01-01T12:00:00Z') })
 
-    const res = await request.get('/api/images/album')
+    const res = await request.get('/api/images/portfolio_images')
 
     expect(res.status).toBe(200)
-    expect(res.body).toEqual(['/images/album/img1.jpg', '/images/album/img2.png'])
+    expect(res.body).toEqual([
+      { path: '/images/portfolio_images/img1.jpg', updatedAt: '2024-01-01T12:00:00.000Z' },
+      { path: '/images/portfolio_images/img2.png', updatedAt: '2024-01-01T12:00:00.000Z' }
+    ])
     expect(fsMock.readdir).toHaveBeenCalled()
   })
 
@@ -70,7 +71,7 @@ describe('images API', () => {
     const token = jwt.sign({ username: 'owner', role: 'owner' }, process.env.JWT_SECRET)
 
     const res = await request
-      .post('/api/images/album')
+      .post('/api/images/portfolio_images')
       .set('Authorization', `Bearer ${token}`)
       .attach('image', Buffer.from('test'), 'test.jpg')
 

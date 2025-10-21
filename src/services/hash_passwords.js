@@ -3,14 +3,10 @@
 import * as fs from 'fs'
 import bcrypt from 'bcrypt'
 import path from 'path'
-import { fileURLToPath } from 'url'
+import { USERS_FILE_PATH } from './config.js'
 
-// Selvitetään nykyinen kansio turvallisesti
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-// Täydellinen polku users.json-tiedostoon suhteessa skriptiin
-const usersPath = path.resolve(__dirname, '../../data/users.json')
+// Täydellinen polku users.json-tiedostoon turvallisesti konfiguroituna
+const usersPath = path.resolve(USERS_FILE_PATH)
 
 // Lue käyttäjät
 let users = JSON.parse(fs.readFileSync(usersPath, 'utf8'))

@@ -22,7 +22,8 @@ beforeEach(async () => {
     readFileSync: jest.fn(() => JSON.stringify(mockUsers)),
     writeFileSync: jest.fn((path, data) => {
       mockUsers = JSON.parse(data)
-    })
+    }),
+    mkdirSync: jest.fn()
   }))
 
   jest.unstable_mockModule('../src/services/logger.js', () => ({

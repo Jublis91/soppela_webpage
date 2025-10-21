@@ -2,18 +2,15 @@
 
 import fs from 'fs'
 import path from 'path'
-import { fileURLToPath } from 'url'
+import { LOG_DIR, LOG_FILE } from './config.js'
 
-// Selvitetään nykyinen hakemisto turvallisesti (ESM-moduulien tapa)
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
-// Lokitiedoston polku (voit muuttaa tämän halutessasi)
-const logFilePath = path.resolve(__dirname, '../../logs/activity.log')
+const logFilePath = LOG_FILE
+const logDirectory = LOG_DIR || path.dirname(logFilePath)
 
 // Luo lokitiedosto hakemistorakenteineen, jos ei vielä ole
 function ensureLogFile() {
-  const dir = path.dirname(logFilePath)
+  const dir = logDirectory
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true })
   }
