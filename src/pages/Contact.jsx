@@ -1,16 +1,24 @@
 // Contact.jsx
+// --------------------------------------------------------------
+// Contact-sivu tarjoaa vierailijalle yksinkertaisen lomakkeen.
+// 1) Käyttäjä täyttää nimensä, sähköpostinsa ja viestinsä.
+// 2) Lomake lähetetään taustapalvelimelle, joka käsittelee viestin.
+// 3) Näytetään onnistumis- tai virheilmoitus käyttäjälle.
+// --------------------------------------------------------------
 
 import { useState } from "react"
 import { logEvent } from "../services/loggerClient"  // 🔹 Lisää lokitus
 import { API_URL } from "../services/apiConfig"
 
 function Contact() {
+  // formData säilyttää lomakkeen kenttien tämänhetkiset arvot.
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   })
 
+  // status kertoo käyttäjälle, miten edellinen lähetys meni (onnistui/epäonnistui).
   const [status, setStatus] = useState(null)
 
   // 🔹 Päivitä kentän arvo

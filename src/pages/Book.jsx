@@ -1,4 +1,9 @@
 // Book.jsx
+// --------------------------------------------------------------
+// Book-sivu esittelee kirjan sisällön. Vierailija voi lukea tekstin,
+// ja jos käyttäjällä on oikeudet, hän voi myös muokata sitä
+// suoraan selaimessa.
+// --------------------------------------------------------------
 
 import { useState, useEffect } from "react"
 import { getCurrentUser } from '../services/authUtils'
@@ -7,9 +12,9 @@ import { API_URL } from '../services/apiConfig'
 
 function Book() {
   const user = getCurrentUser()
-  const [content, setContent] = useState("")
-  const [editing, setEditing] = useState(false)
-  const [draft, setDraft] = useState("")
+  const [content, setContent] = useState("") // Näytettävä teksti palvelimelta.
+  const [editing, setEditing] = useState(false) // Onko muokkaustila päällä?
+  const [draft, setDraft] = useState("") // Väliaikainen teksti muokkausta varten.
 
   // 🔄 Haetaan sisältö sivun latautuessa
   useEffect(() => {
