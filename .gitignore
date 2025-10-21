@@ -30,6 +30,8 @@ data/
 !/public/data/
 /public/data/*
 !/public/data/*.json
+!/public/images/
+!/public/images/**
 .env
 users.json
 soppela.sh

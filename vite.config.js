@@ -10,13 +10,13 @@ const proxyTarget = process.env.VITE_PROXY_TARGET ?? defaultProxyTarget
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: true,                // tärkeä, jotta pääset selaimella ulkoa (Unraid IP)
+    host: true,                
     strictPort: true,
-    watch: { usePolling: true }, // tarvitaan SMB-jaolla
+    watch: { usePolling: true }, 
 
     proxy: {
       '/api': {
-        target: proxyTarget,   // huom: palvelun nimi compose:ssa / ympäristömuuttuja
+        target: proxyTarget,   
         changeOrigin: true,
         secure: false
       },
