@@ -1,15 +1,21 @@
 /* eslint-env node, jest */
 /* eslint no-undef: "off" */
+// logger.test.js
+// --------------------------------------------------------------
+// Tämän tiedoston testit varmistavat, että palvelimen loggeri osaa luoda
+// lokitiedoston ja lisätä viestejä oikeassa muodossa.
+// --------------------------------------------------------------
+
 import { jest } from '@jest/globals'
 import path from 'path'
 
-// Mocks for fs functions
+// Mockataan fs-moduuli, jotta voimme estää oikeat levykirjoitukset.
 const appendFileMock = jest.fn((file, data, cb) => cb && cb(null))
 const existsSyncMock = jest.fn()
 const writeFileSyncMock = jest.fn()
 const mkdirSyncMock = jest.fn()
 
-// Mock fs module
+// Mockataan koko fs-moduuli palauttamaan yllä määritellyt funktiot.
 jest.unstable_mockModule('fs', () => ({
   __esModule: true,
   default: {
@@ -24,7 +30,7 @@ jest.unstable_mockModule('fs', () => ({
   mkdirSync: mkdirSyncMock
 }))
 
-// Import the logger after mocking fs
+// importataan logger moduuli mockatun fs:n kanssa.
 const { logEvent } = await import('../src/services/logger.js')
 
 const logDir = path.resolve(process.cwd(), 'secure', 'logs')
@@ -35,7 +41,7 @@ beforeEach(() => {
 })
 
 test('creates log file if missing', () => {
-  // fs.existsSync should return false for directory and file
+  /// Kun tiedostoa ei ole, loggerin tulee luoda hakemisto ja tyhjä tiedosto.
   existsSyncMock.mockReturnValue(false)
 
   logEvent('Luodaan tiedosto')
@@ -45,6 +51,8 @@ test('creates log file if missing', () => {
 })
 
 test('calls appendFile with correct message', () => {
+  // Kun tiedosto on olemassa, viestin pitäisi päätyä appendFile-kutsuun
+  // aikaleiman kanssa.
   existsSyncMock.mockReturnValue(true)
   jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00Z'))
 

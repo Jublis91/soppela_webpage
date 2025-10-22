@@ -1,11 +1,13 @@
 //authUtils.js
+// --------------------------------------------------------------
+// Tämä tiedosto sisältää apufunktioita käyttäjätietojen
+// käsittelyyn JWT-tokenin avulla.
+// --------------------------------------------------------------
 
 import { logEvent } from './loggerClient.js'
 
-/**
- * Palauttaa nykyisen käyttäjän tiedot JWT-tokenista.
- * Jos tokenia ei ole tai se on virheellinen, palauttaa null.
- */
+// Palauttaa nykyisen käyttäjän tiedot JWT-tokenista.
+// Jos tokenia ei ole tai se on virheellinen, palauttaa null.
 export function getCurrentUser() {
   const token = localStorage.getItem('token')
   if (!token) {
@@ -23,18 +25,14 @@ export function getCurrentUser() {
   }
 }
 
-/**
- * Tarkistaa onko käyttäjä kirjautunut sisään.
- */
+// Tarkistaa onko käyttäjä kirjautunut sisään.
 export function isLoggedIn() {
   const loggedIn = !!localStorage.getItem('token')
   logEvent(loggedIn ? '✅ Käyttäjä on kirjautuneena' : '❌ Käyttäjä ei ole kirjautuneena')
   return loggedIn
 }
 
-/**
- * Tarkistaa onko käyttäjällä oikeus (admin tai owner).
- */
+// Tarkistaa onko käyttäjällä oikeus (admin tai owner).
 export function hasEditRights() {
   const user = getCurrentUser()
   const hasRights = user && (user.role === 'admin' || user.role === 'owner')
@@ -44,9 +42,7 @@ export function hasEditRights() {
   return hasRights
 }
 
-/**
- * Kirjaa käyttäjän ulos ja tyhjentää tokenin.
- */
+// Kirjaa käyttäjän ulos ja tyhjentää tokenin.
 export function logout() {
   const user = getCurrentUser()
   localStorage.removeItem('token')

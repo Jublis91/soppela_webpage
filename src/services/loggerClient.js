@@ -1,4 +1,8 @@
 // loggerClient.js
+// --------------------------------------------------------------
+// Frontend-puolen lokitus: lähetetään viestit palvelimelle ja näytetään ne
+// selaimen konsolissa kehitystilassa. Kommentit avaavat jokaisen vaiheen.
+// --------------------------------------------------------------
 
 import { createApiUrl } from './apiConfig'
 
@@ -14,6 +18,7 @@ export function logEvent(message) {
     message: `${timestamp} - ${message}`,
   }
 
+// Jos käyttäjä on kirjautunut, välitetään loki myös backendille JWT:n avulla.
  if (token) {
     fetch(createApiUrl('/api/logs'), {
       method: "POST",
@@ -27,7 +32,7 @@ export function logEvent(message) {
     })
   }
 
-  // Kehitysympäristössä tulostetaan konsoliin
+  // Kehitysympäristössä tulostetaan viesti myös konsoliin nopeaa debuggausta varten.
   if (import.meta.env.DEV) {
     console.log(logPayload.message)
   }

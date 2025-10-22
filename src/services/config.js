@@ -1,10 +1,15 @@
 /* eslint-env node */
+// --------------------------------------------------------------
+// Tämä tiedosto määrittelee sovelluksen konfiguraatiovakiot,
+// kuten hakemistopolut ja JWT-salaisuuden hallinnan.
+// --------------------------------------------------------------
 
 import * as fs from 'fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import process from 'node:process'
 
+// Määritellään sovelluksen juurihakemisto ja sen alihakemistot.
 const ROOT_DIR = process.cwd()
 const SECURE_DIRECTORY = path.resolve(ROOT_DIR, 'secure')
 const PUBLIC_DIRECTORY = path.resolve(ROOT_DIR, 'public')
@@ -16,17 +21,20 @@ const JWT_SECRET_FILE = path.join(SECURE_DIRECTORY, 'jwt.secret')
 
 let cachedSecret
 
+// Varmistaa, että hakemisto on olemassa.
 function ensureDirectory(dir) {
   if (typeof fs.mkdirSync === 'function') {
     fs.mkdirSync(dir, { recursive: true })
   }
 }
 
+// Luodaan tarvittavat hakemistot sovelluksen käynnistyessä.
 ensureDirectory(SECURE_DIRECTORY)
 ensureDirectory(LOG_DIRECTORY)
 ensureDirectory(DATA_DIRECTORY)
 
 function readSecretFromFile() {
+  // Jos tiedostoa ei ole, palautetaan undefined
   if (typeof fs.existsSync !== 'function' || !fs.existsSync(JWT_SECRET_FILE)) {
     return undefined
   }
@@ -36,6 +44,7 @@ function readSecretFromFile() {
 }
 
 function writeSecretToFile(secret) {
+  // Tallennetaan salaisuus tiedostoon
   try {
     ensureDirectory(SECURE_DIRECTORY)
     if (typeof fs.writeFileSync === 'function') {
@@ -46,6 +55,7 @@ function writeSecretToFile(secret) {
   }
 }
 
+// Hakee JWT-salaisuuden, luo sen jos puuttuu.
 export function getJwtSecret() {
   if (cachedSecret && cachedSecret.trim()) {
     return cachedSecret
@@ -53,11 +63,13 @@ export function getJwtSecret() {
 
   const envSecret = (process.env.JWT_SECRET ?? '').trim()
   if (envSecret) {
+    // Käytetään ympäristömuuttujassa määritettyä salaisuutta
     cachedSecret = envSecret
     return cachedSecret
   }
 
   try {
+    // Yritetään lukea salaisuus tiedostosta
     const fileSecret = readSecretFromFile()
     if (fileSecret) {
       cachedSecret = fileSecret

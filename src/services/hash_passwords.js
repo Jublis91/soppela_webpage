@@ -1,4 +1,9 @@
 // hash_passwords.js
+// --------------------------------------------------------------
+// Tämä skripti lukee käyttäjätiedot JSON-tiedostosta,
+// hashkaa jokaisen käyttäjän salasanan bcryptillä
+// ja tallentaa päivitetyt tiedot takaisin tiedostoon.
+// --------------------------------------------------------------
 
 import * as fs from 'fs'
 import bcrypt from 'bcrypt'
@@ -12,6 +17,7 @@ const usersPath = path.resolve(USERS_FILE_PATH)
 let users = JSON.parse(fs.readFileSync(usersPath, 'utf8'))
 
 async function hashPasswords() {
+  // Käy läpi kaikki käyttäjät ja hashkaa heidän salasanansa
   for (const user of users) {
     if (user.password && !user.passwordHash) {
       const hash = await bcrypt.hash(user.password, 10)

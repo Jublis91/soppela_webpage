@@ -1,4 +1,10 @@
 /* eslint-env node, jest */
+// images.test.js
+// --------------------------------------------------------------
+// Kuvagalleria-endpointtien testit. Näissä varmistetaan, että tiedostolistaukset,
+// lataukset ja poistot toimivat kuten odotetaan turvallisilla mockeilla.
+// --------------------------------------------------------------
+
 import { jest } from '@jest/globals'
 import supertest from 'supertest'
 import jwt from 'jsonwebtoken'
@@ -6,6 +12,7 @@ import jwt from 'jsonwebtoken'
 process.env.NODE_ENV = 'test'
 process.env.JWT_SECRET = 'testsecret'
 
+// Mockattu logEvent estää oikeiden lokitiedostojen kirjoittamisen.
 const logEvent = jest.fn()
 jest.unstable_mockModule('../src/services/logger.js', () => ({ logEvent }))
 
@@ -20,6 +27,7 @@ const fsMock = {
 }
 jest.unstable_mockModule('fs', () => ({ default: fsMock }))
 
+// Multer korvataan mockilla, jotta lataustestit voidaan suorittaa muistissa.
 const multerMock = jest.fn(() => ({
   single: () => (req, res, next) => {
     req.file = { filename: 'uploaded.jpg' }
@@ -34,6 +42,7 @@ const request = supertest(app)
 
 describe('images API', () => {
   beforeEach(() => {
+    // Jokainen testi aloittaa tyhjällä mock-tilalla.
     fsMock.readdir.mockReset()
     fsMock.mkdirSync.mockReset()
     fsMock.unlink.mockReset()
@@ -43,6 +52,7 @@ describe('images API', () => {
   })
 
   test('GET /api/folders palauttaa listan', async () => {
+    // API palauttaa listan sallitusta kansioista.
 
     const res = await request.get('/api/folders')
 
@@ -52,6 +62,7 @@ describe('images API', () => {
   })
 
   test('GET /api/images/:folder palauttaa listan', async () => {
+    // Readdir mockataan palauttamaan kaksi tiedostoa sekä niiden muokkausajat.
     fsMock.readdir.mockImplementation((dir, cb) => {
       cb(null, ['img1.jpg', 'img2.png'])
     })
@@ -68,6 +79,7 @@ describe('images API', () => {
   })
 
   test('POST /api/images/:folder palauttaa 200 kun tiedosto ladattu', async () => {
+    // Käytetään allekirjoitettua tokenia ja varmistetaan, että mockattu multer palauttaa tiedostonimen.
     const token = jwt.sign({ username: 'owner', role: 'owner' }, process.env.JWT_SECRET)
 
     const res = await request
@@ -80,6 +92,7 @@ describe('images API', () => {
   })
 
   test('DELETE /api/images/:folder/:filename poistaa tiedoston', async () => {
+    // Poistossa varmistetaan, että fs.unlink saa kutsun eikä virheitä tule.
     fsMock.unlink.mockImplementation((path, cb) => cb(null))
     const token = jwt.sign({ username: 'owner', role: 'owner' }, process.env.JWT_SECRET)
 
