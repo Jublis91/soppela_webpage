@@ -14,11 +14,12 @@ export function logEvent(message) {
   const timestamp = new Date().toISOString()
   const token = localStorage.getItem('token')
 
+  // Muodostetaan yhtenäinen lokimuoto: aikaleima + varsinainen viesti.
   const logPayload = {
     message: `${timestamp} - ${message}`,
   }
 
-// Jos käyttäjä on kirjautunut, välitetään loki myös backendille JWT:n avulla.
+ // Jos käyttäjä on kirjautunut, välitetään loki myös backendille JWT:n avulla.
  if (token) {
     fetch(createApiUrl('/api/logs'), {
       method: "POST",

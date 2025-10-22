@@ -1,4 +1,9 @@
 // Login.jsx
+// --------------------------------------------------------------
+// Tämä näkymä hoitaa käyttäjän kirjautumisen. Kommentit kuvaavat, miten
+// lomake lukee kentät, lähettää tiedot palvelimelle ja reagoi erilaisiin
+// vastauksiin (onnistuminen, virhe, pakollinen salasanan vaihto).
+// --------------------------------------------------------------
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -6,22 +11,26 @@ import { logEvent } from '../services/loggerClient'; // 🔁 Lokitus
 import { API_URL } from "../services/apiConfig"
 
 export default function Login() {
+  // 🧠 Lomakkeen tilat – käyttäjän syöttämät arvot ja mahdollinen virheviesti.
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // 🔐 Kirjautumisfunktio
+  // 🔐 Kirjautumisfunktio – kutsutaan lomakkeen submitissa.
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
       const res = await fetch(`${API_URL}/api/login`, {
+        // 📡 Lähetetään käyttäjän tunnus ja salasana palvelimelle JSON-muodossa.
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
         body: JSON.stringify({ username, password })
       });
 
+      // Vastauksen käsittely aloitetaan raakatekstinä, jotta mahdollinen
+      // virheellinen JSON voidaan raportoida käyttäjälle selkeästi.
       const text = await res.text();
       console.log("📥 Raakavastaus:", text);
       let data;
@@ -35,6 +44,7 @@ export default function Login() {
         return;
       }
 
+      // Palvelin voi palauttaa virheen, vaikka vastaus olisi JSON-muotoinen.
       if (!res.ok) {
         setError(data.error || 'Kirjautuminen epäonnistui');
         logEvent(`❌ Kirjautuminen epäonnistui käyttäjälle "${username}"`);
@@ -56,6 +66,7 @@ export default function Login() {
       }
 
     } catch (err) {
+      // Puretaan JWT-tokeneista käyttökelpoinen tieto (esim. rooli, pakko vaihtaa salasana).
       console.error('❌ Virhe kirjautumisessa:', err);
       setError('Kirjautuminen epäonnistui. Yritä uudelleen.');
       logEvent(`❌ Kirjautumisen virhe käyttäjälle "${username}": ${err.message}`);

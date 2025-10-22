@@ -25,13 +25,7 @@ dist-ssr
 
 # Own
 suunnitelma.md
-data/
-/public/*
-!/public/data/
-/public/data/*
-!/public/data/*.json
-!/public/images/
-!/public/images/**
+public/
 .env
 users.json
 soppela.sh
